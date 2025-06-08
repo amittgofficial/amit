@@ -1,9 +1,5 @@
 services:
   - type: web
-    name: telegram-bot
+    name: my-service
     env: python
-    plan: free
-    branch: main
-    buildCommand: "pip install -r requirements.txt"
-    startCommand: "python code.py"
-    autoDeploy: true
+    startCommand: python src/code.py
