@@ -1,5 +1,0 @@
-services:
-  - type: web
-    name: my-service
-    env: python
-    startCommand: python src/code.py
