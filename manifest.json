@@ -1,0 +1,16 @@
+{
+  "name": "TOOL",
+  "short_name": "TOOL",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#1e1e2f",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhk1ursjpZ9AO8wJDlsVcnr_5Phr5gcijEc7s4d4Ctg4IgK_gZuWpPMZ9T1Jt7yEnPMIsI3wOzBhcs9skfpxwizQ5YJByK-4paTxKViuDblMIqHdo03vB6bJ6vZT3gsBnPGuYq83n2APUzLzWrZD1oh84smw4y0UQec_Pu627s4oiumTUR_vtc0Hl5kd_Ae/s320/1000004890.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
