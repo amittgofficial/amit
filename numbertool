@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Number Tool</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #1e1e1e;
+      --text-dark: #eee;
+      --primary: #7b1fa2;
+      --accent: #26a69a;
+      --error: #ffebee;
+    }
+
+    body {
+      margin: 0;
+      padding: 20px;
+      font-family: 'Inter', sans-serif;
+      background: var(--bg-dark);
+      color: var(--text-dark);
+      transition: 0.3s;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .header h2 {
+      margin: 0;
+      font-size: 26px;
+      color: var(--primary);
+    }
+
+    textarea {
+      width: 95%;
+      height: 140px;
+      padding: 10px 14px;
+      font-size: 15px;
+      border-radius: 10px;
+      border: 1px solid #666;
+      background: #2c2c2c;
+      color: red;
+      resize: none;
+      line-height: 1.4;
+    }
+
+    .btn, .copy-btn {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 10px 16px;
+      margin-top: 10px;
+      border-radius: 8px;
+      font-size: 15px;
+      width: 100%;
+      cursor: pointer;
+    }
+
+    .copy-btn {
+      background: var(--accent);
+    }
+
+    .card {
+      margin-top: 20px;
+      padding: 16px;
+      border-radius: 12px;
+      background: #2c2c2c;
+    }
+
+    .label {
+      font-weight: bold;
+      color: var(--primary);
+    }
+
+    .dup-pill {
+      background: var(--error);
+      color: #c62828;
+      padding: 8px 12px;
+      border-radius: 6px;
+      margin: 6px 0;
+      display: block;
+    }
+
+    .saved-entry {
+      background: #004d40;
+      color: white;
+      padding: 10px;
+      margin-top: 10px;
+      border-radius: 8px;
+    }
+
+    .saved-meta {
+      font-weight: 600;
+      font-size: 15px;
+      margin-bottom: 6px;
+    }
+
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.6);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 999;
+    }
+
+    .modal {
+      background: #2c2c2c;
+      padding: 20px;
+      border-radius: 12px;
+      width: 90%;
+      max-width: 400px;
+      color: white;
+    }
+
+    .modal h3 {
+      margin-top: 0;
+      color: var(--primary);
+    }
+
+    .modal label {
+      display: block;
+      margin-top: 10px;
+      font-weight: 600;
+    }
+
+    .modal input, .modal select {
+      width: 100%;
+      padding: 8px;
+      margin-top: 6px;
+      border-radius: 6px;
+      border: 1px solid #555;
+      background: #1e1e1e;
+      color: white;
+    }
+
+    .modal .btn-group {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 20px;
+      gap: 10px;
+    }
+
+    .modal .btn-group button {
+      flex: 1;
+    }
+
+    #toast {
+      visibility: hidden;
+      min-width: 250px;
+      margin-left: -125px;
+      background-color: #323232;
+      color: #fff;
+      text-align: center;
+      border-radius: 8px;
+      padding: 12px;
+      position: fixed;
+      z-index: 1000;
+      left: 50%;
+      bottom: 30px;
+      font-size: 16px;
+      transition: all 0.4s ease;
+    }
+
+    #toast.show {
+      visibility: visible;
+      bottom: 50px;
+      opacity: 1;
+    }
+
+    @media (max-width: 600px) {
+      textarea {
+        height: 100px;
+        font-size: 14px;
+        padding: 8px 12px;
+      }
+      .btn, .copy-btn {
+        font-size: 14px;
+        padding: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <h2></h2>
+  </div>
+
+  <textarea id="numberInput" placeholder="Paste numbers here..."></textarea>
+  <button class="btn" onclick="processNumbers()">Filter</button>
+
+  <div class="card">
+    <span class="label">✅ Fresh Number: <span id="cleanCount">0</span></span>
+    <input type="hidden" id="cleanOutput">
+    <button class="copy-btn" onclick="copyToClipboard()">📋 Copy</button>
+    <button class="btn" onclick="saveNumbers()">💾 Save</button>
+  </div>
+
+  <div class="card">
+    <span class="label">❌ Duplicate Number (<span id="dupCount">0</span>):</span>
+    <div id="duplicateOutput"></div>
+  </div>
+
+  <div class="card">
+    <span class="label">🚫 Invalid Numbers (<span id="invalidCount">0</span>):</span>
+    <p id="invalidOutput"></p>
+  </div>
+
+  <div class="card" id="historyCard">
+    <span class="label">📂 History:</span>
+    <div id="savedData"></div>
+  </div>
+
+  <!-- Modal -->
+  <div class="modal-overlay" id="saveModal">
+    <div class="modal">
+      <h3>💾 Save Entry</h3>
+      <label>Name:</label>
+      <input type="text" id="modalNameInput">
+
+      <label>Date:</label>
+      <div style="display:flex; gap: 10px;">
+        <select id="modalDay" style="flex:1">
+          <option disabled selected value="">Day</option>
+          <!-- Days 1 to 31 will be rendered here -->
+        </select>
+
+        <select id="modalMonth" style="flex:2">
+          <option disabled selected value="">Month</option>
+          <option value="Jan">Jan</option>
+          <option value="Feb">Feb</option>
+          <option value="Mar">Mar</option>
+          <option value="Apr">Apr</option>
+          <option value="May">May</option>
+          <option value="Jun">Jun</option>
+          <option value="Jul">Jul</option>
+          <option value="Aug">Aug</option>
+          <option value="Sep">Sep</option>
+          <option value="Oct">Oct</option>
+          <option value="Nov">Nov</option>
+          <option value="Dec">Dec</option>
+        </select>
+      </div>
+
+      <div class="btn-group">
+        <button class="btn" onclick="closeModal()">❌ Cancel</button>
+        <button class="btn" onclick="confirmSave()">✅ Save</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div id="toast"></div>
+
+ 
+  <script>
+  let detectedName = "";
+  let saveCounter = 0;
+  let cleanedNumbers = "";
+
+  window.onload = () => {
+    renderHistory();
+    populateDays(); 
+  };
+
+  
+  function populateDays() {
+    const daySelect = document.getElementById("modalDay");
+
+   
+    for (let i = 1; i <= 31; i++) {
+      const option = document.createElement("option");
+      option.value = i;
+      option.textContent = i;
+      daySelect.appendChild(option);
+    }
+  }
+
+  function showToast(msg) {
+    const toast = document.getElementById("toast");
+    toast.textContent = msg;
+    toast.className = "show";
+    setTimeout(() => {
+      toast.className = toast.className.replace("show", "");
+    }, 2000);
+  }
+
+ 
+
+    function processNumbers() {
+      const input = document.getElementById("numberInput").value.trim();
+      const lines = input.split("\n");
+      detectedName = "Unnamed " + (++saveCounter);
+
+      if (lines.length && lines[0].includes(":")) {
+        detectedName = lines[0].split(":")[0].trim();
+        lines.shift();
+      }
+
+      const numbers = lines.join("\n").split(/[\s,]+/);
+      const seen = new Set();
+      const dupes = new Set();
+      const invalid = [];
+      const cleaned = [];
+
+      for (let num of numbers) {
+        num = num.replace(/\D/g, "");
+        if (num.length === 10) {
+          if (seen.has(num)) {
+            dupes.add(num);
+          } else {
+            seen.add(num);
+            cleaned.push(num);
+          }
+        } else if (num.length > 0) {
+          invalid.push(num);
+        }
+      }
+
+      document.getElementById("cleanOutput").value = cleaned.join(",");
+      document.getElementById("cleanCount").textContent = cleaned.length;
+
+      const dupDiv = document.getElementById("duplicateOutput");
+      dupDiv.innerHTML = "";
+      Array.from(dupes).forEach((n, i) => {
+        const el = document.createElement("div");
+        el.className = "dup-pill";
+        el.textContent = `${i + 1}. ${n}`;
+        dupDiv.appendChild(el);
+      });
+
+      document.getElementById("dupCount").textContent = dupes.size;
+      document.getElementById("invalidOutput").textContent = invalid.join(", ");
+      document.getElementById("invalidCount").textContent = invalid.length;
+    }
+
+    function copyToClipboard() {
+      const val = document.getElementById("cleanOutput").value;
+      if (!val) return showToast("⚠️ No numbers found.");
+      navigator.clipboard.writeText(val).then(() => showToast("✅ Copied!"));
+    }
+
+    function saveNumbers() {
+      const val = document.getElementById("cleanOutput").value;
+      if (!val) return showToast("⚠️ Filter numbers first.");
+      cleanedNumbers = val;
+
+      const input = document.getElementById("numberInput").value.trim();
+      const lines = input.split("\n");
+
+      if (lines.length && lines[0].includes(":")) {
+        detectedName = lines[0].split(":")[0].trim();
+      }
+
+      document.getElementById("modalNameInput").value = detectedName;
+      document.getElementById("modalDay").value = "";
+      document.getElementById("modalMonth").value = "";
+      document.getElementById("saveModal").style.display = "flex";
+    }
+
+    function closeModal() {
+      document.getElementById("saveModal").style.display = "none";
+    }
+
+    function confirmSave() {
+      const name = document.getElementById("modalNameInput").value.trim();
+      const day = document.getElementById("modalDay").value;
+      const month = document.getElementById("modalMonth").value;
+
+      if (!name || !day || !month) {
+        showToast("⚠️ Fill all fields.");
+        return;
+      }
+
+      const date = `${day} ${month}`;
+      const now = new Date();
+      const time = now.toLocaleTimeString();
+      const entry = { name, date, time, numbers: cleanedNumbers };
+
+      let all = JSON.parse(localStorage.getItem("savedNumbers") || "[]");
+      all.push(entry);
+      localStorage.setItem("savedNumbers", JSON.stringify(all));
+
+      closeModal();
+      showToast("✅ Saved!");
+      renderHistory();
+    }
+
+    function deleteEntry(index) {
+      let all = JSON.parse(localStorage.getItem("savedNumbers") || "[]");
+      all.splice(index, 1);
+      localStorage.setItem("savedNumbers", JSON.stringify(all));
+      renderHistory();
+      showToast("🗑️ Deleted!");
+    }
+
+    function renderHistory() {
+      const saved = JSON.parse(localStorage.getItem("savedNumbers") || "[]");
+      const container = document.getElementById("savedData");
+      container.innerHTML = "";
+
+      saved.forEach((item, i) => {
+        const div = document.createElement("div");
+        div.className = "saved-entry";
+        div.innerHTML = `
+          <div class="saved-meta">📛 <b>${item.name}</b> | 🗓️ ${item.date} | 🕒 ${item.time}</div>
+          <button class="copy-btn" onclick="navigator.clipboard.writeText('${item.numbers}').then(() => showToast('📋 Copied!'))">📋 Copy</button>
+          <button class="btn" style="background:#c62828;margin-top:6px" onclick="deleteEntry(${i})">🗑️ Delete</button>
+        `;
+        container.appendChild(div);
+      });
+    }
+  </script>
+</body>
+  </html>
