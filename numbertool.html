@@ -504,10 +504,14 @@ function showToast(msg) {
       const container = document.getElementById("savedData");
       container.innerHTML = "";
 
-      saved.forEach((item, i) => {
-        const div = document.createElement("div");
-        const numCount = item.numbers.split(",").length;
-        div.className = "saved-entry";
+      const reversedSaved = saved.reverse();
+  reversedSaved.forEach((item, i) => {
+    const numCount = item.numbers.split(",").length;
+    const dateParts = item.date.split(" ");
+    const day = dateParts[0];
+    const month = dateParts[1];
+    const div = document.createElement("div");
+    div.className = "saved-entry";
         div.innerHTML = `
           <div class="saved-meta">
 <b>🔥 <b>${numCount} Number<br>
