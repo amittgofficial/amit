@@ -409,6 +409,7 @@
 
       saved.forEach((item, i) => {
         const div = document.createElement("div");
+            const numCount = item.numbers.split(",").length; 
         div.className = "saved-entry";
         div.innerHTML = `
           <div class="saved-meta">📛 <b>${item.name}</b> | 🗓️ ${item.date} | 🕒 ${item.time}</div>
