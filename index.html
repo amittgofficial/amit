@@ -2,108 +2,123 @@
 <html lang="en">
 <head>
 
-  <!-- Manifest & App Icons -->
+<!-- Manifest & App Icons -->
 <link rel="manifest" href="manifest.json" />
 <meta name="theme-color" content="#1e1e2f" />
 <link rel="apple-touch-icon" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhk1ursjpZ9AO8wJDlsVcnr_5Phr5gcijEc7s4d4Ctg4IgK_gZuWpPMZ9T1Jt7yEnPMIsI3wOzBhcs9skfpxwizQ5YJByK-4paTxKViuDblMIqHdo03vB6bJ6vZT3gsBnPGuYq83n2APUzLzWrZD1oh84smw4y0UQec_Pu627s4oiumTUR_vtc0Hl5kd_Ae/s320/1000004890.png">
 <meta name="apple-mobile-web-app-capable" content="yes" />
   
-  <meta charset="UTF-8">
-  <title>Home</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Stylish Bottom Buttons</title>
   <style>
-    /* Reset */
-    * {
+    body {
+      background: #f0f0f3;
       margin: 0;
       padding: 0;
-      box-sizing: border-box;
-    }
-
-    body {
       font-family: 'Segoe UI', sans-serif;
-      background-color: #000; /* Pure black */
-      color: white;
-      padding-bottom: 200px; /* Room for bottom nav */
-    }
-
-    h1 {
-      text-align: center;
-      margin-top: 100px;
-      font-size: 28px;
-    }
-
-    /* Bottom nav background black outside curved part */
-    body::after {
-      content: "";
-      position: fixed;
-      bottom: 0;
-      width: 100%;
-      height: 100px;
-      background-color: black;
-      z-index: 0;
-    }
-
-    .bottom-nav {
-      position: fixed;
-      bottom: 0;
-      width: 100%;
-      background: linear-gradient(135deg, #1e1e2f, #2c2c4d);
       display: flex;
       flex-direction: column;
-      align-items: center;
-      padding: 25px 0;
-      box-shadow: 0 -4px 20px rgba(0,0,0,0.7);
-      border-top-left-radius: 25px;
-      border-top-right-radius: 25px;
-      gap: 15px;
-      z-index: 1;
+      min-height: 100vh;
     }
 
-    .nav-item {
-      background: #3b3b5a;
-      color: white;
-      padding: 14px 35px;
-      text-decoration: none;
-      border-radius: 20px;
-      font-size: 17px;
-      font-weight: 500;
-      width: 80%;
+    .heading {
       text-align: center;
-      transition: background 0.3s, transform 0.2s;
+      padding-top: 40px;
+      padding-bottom: 20px;
     }
 
-    .nav-item:hover {
-      background: #50507a;
-      transform: scale(1.03);
+    .heading h1 {
+      font-size: 38px;
+      font-weight: 800;
+      color: #222;
+      text-shadow: 2px 2px 0 #ccc, 4px 4px 0 #bbb;
+      margin: 0;
     }
 
-    .nav-item:active {
-      background: #6e6ea8;
-      transform: scale(0.98);
+    .heading h2 {
+      font-size: 28px;
+      font-weight: 900;
+      background: linear-gradient(135deg, #8e2de2, #ff6ec4);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.15);
+      margin: 8px 0 0;
+    }
+
+    .spacer {
+      flex: 1;
+    }
+
+    .button-grid {
+      display: grid;
+      grid-template-columns: repeat(2, auto);
+      gap: 25px;
+      justify-content: center;
+      padding: 25px;
+      background: #fff;
+      box-shadow: 0 -2px 8px rgba(0,0,0,0.1);
+    }
+
+    .btn {
+      padding: 14px 28px;
+      font-size: 18px;
+      font-weight: bold;
+      background: linear-gradient(135deg, #8e2de2, #ff6ec4);
+      color: white;
+      border: none;
+      border-radius: 14px;
+      box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      letter-spacing: 0.5px;
+    }
+
+    .btn:active,
+    .btn.clicked {
+      background: linear-gradient(135deg, #1e3c72, #2a5298);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+      transform: scale(0.96);
     }
   </style>
 </head>
 <body>
 
-  <h1>TOOL</h1>
+  <div class="heading">
+    <h1>Welcome
+To
+Tool Management</h1>
+  </div>
 
-  <!-- Bottom Navigation -->
-  <div class="bottom-nav">
-    <a href="code.html" class="nav-item">CODE SET-UP</a>
-    <a href="infotech.html" class="nav-item">INFOTECH</a>
-    <a href="numbertool.html" class="nav-item">Number Tool</a>
-    <a href="snap.html" class="nav-item">SNAPWALLET</a>
-    <a href="youtube.html" class="nav-item">YouTube</a>
-    <a href="cc.html" class="nav-item">CALCULATOR</a>
-    <a href="search.html" class="nav-item">SEARCH</a>
+  <div class="spacer"></div>
+
+
+  <div class="button-grid">
+    <button class="btn" onclick="handleClick(this, 'code.html')">Code Setup</button>
+    <button class="btn" onclick="handleClick(this, 'numbertool.html')">NUMBER TOOL</button>
+    <button class="btn" onclick="handleClick(this, 'infotech.html')">INFOTECH</button>
+    <button class="btn" onclick="handleClick(this, 'snap.html')">SNAPWALLET</button>
+    <button class="btn" onclick="handleClick(this, 'youtube.html')">YouTube</button>
+    <button class="btn" onclick="handleClick(this, 'cc.html.html')">CALCULATOR</button>
+    <button class="btn" onclick="handleClick(this, 'search.html')">SEARCH</button>
   </div>
 
   <script>
-  if ("serviceWorker" in navigator) {
+    function handleClick(button, url) {
+      button.classList.add('clicked');
+      setTimeout(() => {
+        button.classList.remove('clicked');
+        window.location.href = url;
+      }, 200);
+    }
+
+if ("serviceWorker" in navigator) {
     navigator.serviceWorker.register("service-worker.js")
       .then(() => console.log("✅ Service Worker registered"))
       .catch((e) => console.error("SW registration failed:", e));
   }
+
   </script>
 
 </body>
