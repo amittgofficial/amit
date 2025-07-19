@@ -37,16 +37,16 @@
     }
 
     textarea {
-      width: 95%;
+      width: 360px;
       height: 140px;
       padding: 10px 14px;
       font-size: 15px;
       border-radius: 10px;
-      border: 1px solid #666;
+      border: 2px solid #666;
       background: #2c2c2c;
       color: red;
       resize: none;
-      line-height: 1.4;
+      line-height: 1.0;
     }
 
     .btn, .copy-btn {
@@ -185,13 +185,58 @@
         font-size: 14px;
         padding: 10px;
       }
+    /* Modal for confirmation */
+.modal-overlay {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.6);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+.modal {
+  background: #2c2c2c;
+  padding: 20px;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 400px;
+  color: white;
+}
+
+.modal h3 {
+  margin-top: 0;
+  color: var(--primary);
+}
+
+.modal .btn-group {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 20px;
+  gap: 10px;
+}
+
+.modal .btn-group button {
+  flex: 1;
+}
+
     }
   </style>
 </head>
 <body>
 
-  <div class="header">
-    <h2></h2>
+  
+<div class="header">
+
+  <!-- Copy Button in Header -->
+  <button id="copyBtn" class="btn">Number Tool</button>
+</div>
+
+<!-- Text to be copied -->
+<p id="textToCopy" style="display:none;">This is the text to be copied!</p>
+
   </div>
 
   <textarea id="numberInput" placeholder="Paste numbers here..."></textarea>
@@ -214,10 +259,14 @@
     <p id="invalidOutput"></p>
   </div>
 
-  <div class="card" id="historyCard">
-    <span class="label">📂 History:</span>
-    <div id="savedData"></div>
-  </div>
+<!-- History Section -->
+<div class="card" id="historyCard">
+  <span class="label">📂 History:</span>
+  <div id="savedData"></div>
+  
+  <!-- Clear All Button -->
+  <button class="btn" id="clearAllBtn" style="background:#c62828; margin-top: 10px;">Clear All</button>
+</div>
 
   <!-- Modal -->
   <div class="modal-overlay" id="saveModal">
@@ -257,6 +306,17 @@
     </div>
   </div>
 
+<!-- Modal for Confirmation -->
+<div class="modal-overlay" id="clearAllModal">
+  <div class="modal">
+    <h3>⚠️ Are you sure you want to clear all history?</h3>
+    <div class="btn-group">
+      <button class="btn" onclick="closeClearAllModal()">❌ Cancel</button>
+      <button class="btn" onclick="clearAllHistory()">✅ Confirm</button>
+    </div>
+  </div>
+</div>
+
   <!-- Toast -->
   <div id="toast"></div>
 
@@ -271,6 +331,32 @@
     populateDays(); 
   };
 
+// Show confirmation modal for clearing all history
+document.getElementById("clearAllBtn").addEventListener("click", function() {
+  document.getElementById("clearAllModal").style.display = "flex";
+});
+
+// Close the confirmation modal without clearing
+function closeClearAllModal() {
+  document.getElementById("clearAllModal").style.display = "none";
+}
+
+// Function to clear all history
+function clearAllHistory() {
+  // Clear all data from localStorage
+  localStorage.removeItem("savedNumbers");
+
+  // Close the modal
+  closeClearAllModal();
+
+  // Show a toast to notify the user
+  showToast("All history cleared!");
+
+  // Re-render the history (which will now be empty)
+  renderHistory();
+}
+
+
   
   function populateDays() {
     const daySelect = document.getElementById("modalDay");
@@ -284,14 +370,25 @@
     }
   }
 
-  function showToast(msg) {
-    const toast = document.getElementById("toast");
-    toast.textContent = msg;
-    toast.className = "show";
-    setTimeout(() => {
-      toast.className = toast.className.replace("show", "");
-    }, 2000);
-  }
+  document.getElementById("copyBtn").addEventListener("click", function() {
+  const textToCopy = document.getElementById("textToCopy");
+  const tempInput = document.createElement("input");
+  document.body.appendChild(tempInput);
+  tempInput.value = textToCopy.textContent;
+  tempInput.select();
+  document.execCommand("copy");
+  document.body.removeChild(tempInput);
+  showToast("✅ Text Copied!");
+});
+
+function showToast(msg) {
+  const toast = document.getElementById("toast");
+  toast.textContent = msg;
+  toast.className = "show";
+  setTimeout(() => {
+    toast.className = toast.className.replace("show", "");
+  }, 2000);
+}
 
  
 
@@ -409,16 +506,18 @@
 
       saved.forEach((item, i) => {
         const div = document.createElement("div");
-            const numCount = item.numbers.split(",").length; 
+        const numCount = item.numbers.split(",").length;
         div.className = "saved-entry";
         div.innerHTML = `
-          <div class="saved-meta">📛 <b>${item.name}</b> | 🗓️ ${item.date} | 🕒 ${item.time}</div>
+          <div class="saved-meta">
+<b>🔥 <b>${numCount} Number<br>
+<b>📛 <b>${item.name}<br>
+<b>🗓️ ${item.date}</div>
           <button class="copy-btn" onclick="navigator.clipboard.writeText('${item.numbers}').then(() => showToast('📋 Copied!'))">📋 Copy</button>
-          <button class="btn" style="background:#c62828;margin-top:6px" onclick="deleteEntry(${i})">🗑️ Delete</button>
         `;
         container.appendChild(div);
       });
     }
   </script>
 </body>
-  </html>
+</html>
