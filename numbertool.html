@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AmitTG - Number Tool</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 20px;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to bottom right, #e0f7fa, #e1bee7);
+      color: #333;
+    }
+
+    h2 {
+      text-align: center;
+      color: #4a148c;
+    }
+
+    textarea, input[type="text"] {
+      width: 95%;
+      padding: 12px;
+      font-size: 16px;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+      box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
+      resize: vertical;
+      margin-top: 10px;
+    }
+
+    textarea {
+      height: 250px;
+    }
+
+    button {
+      background-color: #7b1fa2;
+      color: black;
+      border: none;
+      padding: 12px 20px;
+      margin-top: 15px;
+      border-radius: 8px;
+      font-size: 16px;
+      width: 100%;
+      cursor: pointer;
+      transition: 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #4a148c;
+    }
+
+    .output, .duplicates, .invalids, .history {
+      background: black;
+      padding: 15px;
+      margin-top: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+    .label {
+      font-weight: bold;
+      margin-bottom: 8px;
+      display: block;
+      color: #6a1b9a;
+    }
+
+    .copy-btn {
+      background: #26a69a;
+      color: white;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-size: 14px;
+      cursor: pointer;
+      margin-top: 10px;
+      width: 100%;
+    }
+
+    .history-item {
+      border-bottom: 1px solid #ccc;
+      padding: 8px 0;
+    }
+
+    .history-item span {
+      display: block;
+    }
+
+    ol {
+      padding-left: 20px;
+      margin-top: 10px;
+    }
+
+    #toast {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #333;
+      color: white;
+      padding: 14px 22px;
+      border-radius: 8px;
+      font-size: 16px;
+      display: none;
+      z-index: 9999;
+      box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+      transition: all 0.3s ease;
+    }
+
+    .toast-success { background-color: #4caf50; }
+    .toast-error   { background-color: #f44336; }
+    .toast-warn    { background-color: #ff9800; }
+
+    .date-save-box {
+      background: #f3e5f5;
+      border: 2px solid #ce93d8;
+      padding: 15px;
+      border-radius: 12px;
+      margin-top: 20px;
+      box-shadow: 0 3px 5px rgba(0,0,0,0.1);
+    }
+
+    .date-save-box input[type="text"] {
+      width: 90%;
+      margin-top: 0;
+      margin-bottom: 10px;
+    }
+
+    @media (max-width: 600px) {
+      .copy-btn {
+        width: 100%;
+      }
+
+.clear-btn {
+  background: #f44336;
+  color: white;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 10px;
+  margin-top: 12px;
+  font-weight: 600;
+  font-size: 16px;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.clear-btn:hover {
+  background: #d32f2f;
+}
+
+.confirm-box {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.confirm-content {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  max-width: 300px;
+  width: 90%;
+  text-align: center;
+  font-family: 'Segoe UI', sans-serif;
+  box-shadow: 0 8px 15px rgba(0,0,0,0.3);
+}
+
+.confirm-content p {
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.confirm-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.yes-btn, .no-btn {
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: none;
+  font-weight: bold;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.yes-btn {
+  background: #4caf50;
+  color: white;
+}
+
+.no-btn {
+  background: #e0e0e0;
+  color: black;
+}
+    }
+  </style>
+</head>
+<body>
+
+  <h2>📱 Number Cleaner Tool</h2>
+
+  <textarea id="numberInput" placeholder="Paste numbers here.."></textarea>
+
+  <button onclick="processNumbers()">Filter</button>
+
+  <div class="output">
+    <span class="label">✅ Fresh Numbers: <span id="cleanCount">0</span></span>
+    <input type="hidden" id="cleanOutput">
+
+    <button class="copy-btn" onclick="copyToClipboard()">📋 Copy </button>
+    <button class="copy-btn" onclick="showDateBox()">💾 Save</button>
+  </div>
+
+  <div class="date-save-box" id="dateBox" style="display:none;">
+    <input type="text" id="dateInput" placeholder="📅 Enter date" />
+    <button class="copy-btn" onclick="finalSave()">✅ Confirm Save</button>
+  </div>
+
+  <div class="duplicates">
+    <span class="label">❌ Duplicate Numbers (<span id="dupCount">0</span>):</span>
+    <ol id="duplicateOutput"></ol>
+  </div>
+
+  <div class="invalids">
+    <span class="label">🚫 Invalid Numbers (<span id="invalidCount">0</span>):</span>
+    <p id="invalidOutput"></p>
+  </div>
+
+  <div class="history">
+    <span class="label">📂 History</span>
+    <div id="historyList"></div>
+  </div>
+
+<button onclick="showClearAllConfirm()" class="clear-btn">🗑️ Clear All</button>
+
+
+  <div id="toast"></div>
+
+  <script>
+    function showToast(msg, type = 'success') {
+      const toast = document.getElementById('toast');
+      toast.className = '';
+      toast.textContent = msg;
+      toast.classList.add('toast-' + type);
+      toast.style.display = 'block';
+      setTimeout(() => {
+        toast.style.display = 'none';
+      }, 3000);
+    }
+
+function showClearAllConfirm() {
+  const confirmBox = document.createElement("div");
+  confirmBox.className = "confirm-box";
+  confirmBox.innerHTML = `
+    <div class="confirm-content">
+      <p>⚠️ Are you sure you want to clear all saved history?</p>
+      <div class="confirm-actions">
+        <button onclick="clearAllHistory()" class="yes-btn">Yes</button>
+        <button onclick="closeConfirmBox()" class="no-btn">No</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(confirmBox);
+}
+
+function closeConfirmBox() {
+  const box = document.querySelector(".confirm-box");
+  if (box) box.remove();
+}
+
+function clearAllHistory() {
+  localStorage.removeItem("history");
+  closeConfirmBox();
+  showToast("🗑️ All history cleared!", "success");
+  setTimeout(() => location.reload(), 800);
+}
+
+    function processNumbers() {
+      const input = document.getElementById("numberInput").value;
+      const rawNumbers = input.split(/[\s,]+/);
+      const valid = [], invalid = [], seen = new Set(), duplicates = new Set(), finalCleaned = [];
+
+      for (let num of rawNumbers) {
+        num = num.replace(/\D/g, "");
+        if (num.length === 10) {
+          if (seen.has(num)) duplicates.add(num);
+          else {
+            seen.add(num);
+            finalCleaned.push(num);
+          }
+        } else if (num.length > 0) {
+          invalid.push(num);
+        }
+      }
+
+      document.getElementById("cleanOutput").value = finalCleaned.join(",");
+      document.getElementById("cleanCount").textContent = finalCleaned.length;
+
+      const dupOutput = document.getElementById("duplicateOutput");
+      dupOutput.innerHTML = '';
+      Array.from(duplicates).forEach(num => {
+        const li = document.createElement("li");
+        li.textContent = num;
+        dupOutput.appendChild(li);
+      });
+      document.getElementById("dupCount").textContent = duplicates.size;
+      document.getElementById("invalidOutput").textContent = invalid.join(", ");
+      document.getElementById("invalidCount").textContent = invalid.length;
+
+      showToast("✅ Numbers filter successfully!");
+    }
+
+    function copyToClipboard() {
+      const text = document.getElementById("cleanOutput").value;
+      if (!text) return showToast("⚠️ No cleaned numbers to copy.", "warn");
+      navigator.clipboard.writeText(text).then(() => showToast("📋 Copied to clipboard!", "success"));
+    }
+
+    function showDateBox() {
+      const cleanData = document.getElementById("cleanOutput").value;
+      if (!cleanData) return showToast("⚠️ Please clean numbers before saving.", "warn");
+      document.getElementById("dateBox").style.display = "block";
+    }
+
+    function finalSave() {
+      const nameLine = document.getElementById("numberInput").value.split('\n').find(line => line.trim().endsWith(':'));
+      const name = nameLine ? nameLine.replace(':', '').trim() : 'Unnamed';
+      const numbers = document.getElementById("cleanOutput").value;
+      const date = document.getElementById("dateInput").value.trim();
+
+      if (!numbers) return showToast("⚠️ Please clean numbers before saving.", "warn");
+      if (!date) return showToast("❗ Date is required.", "error");
+
+      const entry = {
+        name,
+        date,
+        numbers,
+        total: numbers.split(',').length
+      };
+
+      const history = JSON.parse(localStorage.getItem("history") || "[]");
+      history.unshift(entry);
+      localStorage.setItem("history", JSON.stringify(history));
+
+      showToast("✅ Saved successfully!");
+      setTimeout(() => location.reload(), 1000);
+    }
+
+    function loadHistory() {
+      const history = JSON.parse(localStorage.getItem("history") || "[]");
+      const container = document.getElementById("historyList");
+      container.innerHTML = '';
+
+      if (!history.length) {
+        container.innerHTML = "<i>No history found.</i>";
+        return;
+      }
+
+      history.forEach((item, index) => {
+        const div = document.createElement("div");
+        div.className = "history-item";
+        div.innerHTML = `
+          <span><strong>📝 :</strong> ${item.name}</span>
+          <span><strong>📅 :</strong> ${item.date}</span>
+          <span><strong>📊 :</strong> ${item.total}</span>
+          <button class="copy-btn" onclick="navigator.clipboard.writeText('${item.numbers}'); showToast('📋 Copied!')">📋 Copy</button>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    loadHistory();
+  </script>
+
+</body>
+</html>
