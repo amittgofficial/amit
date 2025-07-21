@@ -2,418 +2,196 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Code Set-up Tool</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#111111">
-
+  <title>Premium Number Cleaner</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <style>
     body {
-      font-family: sans-serif;
-      background: #111;
-      color: #fff;
       margin: 0;
       padding: 20px;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to right, #1f4037, #99f2c8);
+      color: #fff;
     }
-    .box {
-      background: #222;
-      padding: 20px;
-      border-radius: 12px;
-      max-width: 600px;
-      margin: auto;
+
+    h2 {
+      color: #ffe066;
     }
-    textarea, input {
-      width: 100%;
+
+    textarea {
+      width: 95%;
+      height: 120px;
       padding: 10px;
+      font-size: 16px;
       border-radius: 8px;
+      border: none;
+      resize: none;
       margin-bottom: 10px;
-      border: none;
-      font-family: monospace;
-      background: #333;
-      color: #fff;
     }
+
     button {
-      padding: 10px 20px;
-      border-radius: 8px;
+      padding: 10px 16px;
+      margin: 6px 8px 12px 0;
       border: none;
-      cursor: pointer;
-    }
-    .output {
-      white-space: pre-wrap;
-      background: #000;
-      padding: 15px;
-      margin-top: 10px;
       border-radius: 8px;
-    }
-    .btn-list { background: #8e24aa; color: #fff; }
-    .btn-save { background: #2e7d32; color: #fff; }
-    .btn-show { background: #1565c0; color: #fff; }
-    .btn-copy { background: #f57c00; color: #fff; }
-    .btn-confirm { background: #00897b; color: #fff; }
-    .btn-mono { background: #00acc1; color: #fff; }
-    button:hover {
-      opacity: 0.9;
-      transform: scale(1.03);
-      transition: 0.2s ease-in-out;
-    }
-    .code-center {
-      display: none;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      margin: 30px auto 10px;
-      max-width: 400px;
-    }
-    .code-center input,
-    .code-center button {
-      width: 100%;
-      margin: 6px 0;
-    }
-    .toast {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      background: rgba(30, 30, 30, 0.9);
-      color: #fff;
-      padding: 20px 25px;
-      border-radius: 12px;
-      display: none;
-      z-index: 999;
+      background: #ffe066;
+      color: #222;
       font-weight: bold;
-      text-align: center;
-      min-width: 200px;
-      box-shadow: 0 0 10px #00c853;
+      cursor: pointer;
+      transition: background 0.3s;
     }
-    .toast .loader {
-      border: 4px solid #333;
-      border-top: 4px solid #00e676;
-      border-radius: 50%;
-      width: 30px;
-      height: 30px;
-      margin: 10px auto 0;
-      animation: spin 0.8s linear infinite;
+
+    button:hover {
+      background: #ffd500;
     }
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
+
+    .box {
+      background: #fff;
+      color: #000;
+      padding: 14px;
+      border-radius: 10px;
+      margin-top: 10px;
+      white-space: pre-wrap;
+      font-size: 16px;
     }
-    .popup, #userListPopup {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0,0,0,0.7);
+
+    .hidden {
       display: none;
-      justify-content: center;
-      align-items: center;
-      z-index: 9999;
     }
-    .popup-content {
-      background: #222;
-      padding: 20px;
-      border-radius: 12px;
-      width: 90%;
-      max-width: 500px;
-      position: relative;
-      animation: popIn 0.3s ease;
+
+    .section {
+      margin-bottom: 20px;
     }
-    .popup-content span {
-      position: absolute;
-      top: 10px;
-      right: 15px;
-      font-size: 20px;
+
+    .banned-item {
+      display: inline-block;
+      background: #ffe5e5;
+      color: #a00;
+      padding: 4px 8px;
+      border-radius: 6px;
+      margin: 3px 3px 3px 0;
+      font-size: 12px;
+    }
+
+    .banned-item button {
+      background: transparent;
+      border: none;
+      color: #a00;
+      margin-left: 6px;
+      font-size: 14px;
       cursor: pointer;
     }
-    @keyframes popIn {
-      from { transform: scale(0.8); opacity: 0; }
-      to { transform: scale(1); opacity: 1; }
+
+    .banned-list-box {
+      font-size: 14px;
+      padding: 10px;
     }
+
   </style>
 </head>
 <body>
 
-<div class="box" id="toolSection">
-  <div style="display: flex; flex-direction: column; align-items: center; gap: 10px; margin-bottom: 20px;">
-    <button onclick="toggleSection('home')" class="btn-confirm" style="width: 50%;">🏠 Home</button>
-    <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
-      <button onclick="toggleSection('list')" class="btn-list">📋 List</button>
-      <button onclick="showUserListPopup()" class="btn-copy">👥 Userlist</button>
-      <button onclick="toggleSection('mono')" class="btn-mono">💠 Mono</button>
-      <button onclick="toggleSection('history')" class="btn-show">📜 History</button>
+  <h1>📱 Premium Number Cleaner</h1>
+
+  <!-- BAN SECTION -->
+  <div class="section">
+    <button onclick="toggleSection('banSection')">🔒 Ban Section</button>
+    <div id="banSection" class="hidden">
+      <h2>➕ Add Banned Numbers</h2>
+      <textarea id="bannedInput" placeholder="Enter banned numbers (comma or line based)"></textarea>
+      <button onclick="addBanned()">➕ Add</button>
+      <button onclick="clearBanned()">🗑️ Clear All</button>
+      <div class="box banned-list-box" id="bannedDisplay">No banned numbers.</div>
     </div>
   </div>
 
-  <div class="code-center" id="codeSection">
-    <input type="text" id="codeInput" placeholder="Enter your code" oninput="autoFocusNumber()" />
-    <input type="number" id="numberInput" placeholder="Enter number" />
-    <button onclick="insertCode()" class="btn-save">💾 Save Code</button>
+  <!-- CLEAN SECTION -->
+  <div class="section">
+    <button onclick="toggleSection('cleanSection')">🧹 Clean Section</button>
+    <div id="cleanSection" class="hidden">
+      <h2>🟢 Paste Numbers to Clean</h2>
+      <textarea id="inputNumbers" placeholder="Paste your fresh numbers here..."></textarea>
+      <button onclick="clean()">🚀 Clean Now</button>
+
+      <h2>📊 Result Summary</h2>
+      <div class="box" id="statsBox">No cleaning yet.</div>
+
+      <h2>✅ Cleaned Numbers</h2>
+      <button onclick="copyOutput()">📋 Copy Cleaned</button>
+      <div class="box" id="outputBox">Nothing yet.</div>
+    </div>
   </div>
 
-  <div id="outputSection">
-    <div id="result" class="output"></div>
-    <button id="copyBtn" class="btn-copy" onclick="copyResult()">📋 Copy</button>
-    <button id="saveHistoryBtn" class="btn-save" onclick="saveUpdatedListToHistory()">💾 Save List</button>
-  </div>
+  <script>
+    let bannedSet = new Set();
 
-  <textarea id="monoInput" rows="6" placeholder="🔤 Paste mono list (codes)..." style="display:none;"></textarea>
-  <button id="monoRunBtn" onclick="runMono()" class="btn-mono" style="display:none;">⚙️ Convert Mono</button>
-  <div id="monoResult" class="output" style="display:none;"></div>
-  <button id="copyMono" class="btn-copy" onclick="copyMonoResult()" style="display:none;">📋 Copy Mono</button>
+    window.onload = () => {
+      const saved = localStorage.getItem("bannedNumbers");
+      if (saved) {
+        bannedSet = new Set(JSON.parse(saved));
+        updateBannedDisplay();
+      }
+    };
 
-  <div id="historyOutput" class="output" style="display:none;"></div>
-</div>
+    function toggleSection(id) {
+      document.getElementById(id).classList.toggle("hidden");
+    }
 
-<!-- 📋 List Popup -->
-<div class="popup" id="listPopup">
-  <div class="popup-content">
-    <span onclick="document.getElementById('listPopup').style.display='none'">❌</span>
-    <h3>📋 Enter Date & List</h3>
-    <input type="text" id="popupDateInput" placeholder="🗓 Date (e.g. 15 June)" />
-    <textarea id="popupListInput" rows="6" placeholder="📄 Paste your list..."></textarea>
-    <button onclick="submitListPopup()" class="btn-confirm">💾 Save</button>
-  </div>
-</div>
+    function addBanned() {
+      const input = document.getElementById("bannedInput").value.trim();
+      const items = input.split(/[\n,]+/).map(x => x.trim()).filter(Boolean); // Accept comma or newline
+      items.forEach(num => bannedSet.add(num));
+      localStorage.setItem("bannedNumbers", JSON.stringify([...bannedSet]));
+      updateBannedDisplay();
+      document.getElementById("bannedInput").value = "";
+    }
 
-<!-- 👥 Userlist Popup -->
-<div id="userListPopup" class="popup">
-  <div class="popup-content">
-    <span onclick="document.getElementById('userListPopup').style.display='none'">❌</span>
-    <h3>👥 Userlist</h3>
-    <div id="userListContent" style="max-height:400px; overflow:auto; background:#000; padding:10px; border-radius:8px; white-space:pre-wrap; color:#fff;"></div>
-    <button onclick="copyUserList()" class="btn-copy" style="margin-top:10px; width:100%;">📋 Copy</button>
-  </div>
-</div>
+    function updateBannedDisplay() {
+      const box = document.getElementById("bannedDisplay");
+      box.innerHTML = "";
+      if (bannedSet.size === 0) {
+        box.innerText = "No banned numbers.";
+        return;
+      }
+      [...bannedSet].forEach(num => {
+        const span = document.createElement("span");
+        span.className = "banned-item";
+        span.innerHTML = `${num}<button onclick="removeBanned('${num}')">❌</button>`;
+        box.appendChild(span);
+      });
+    }
 
-<!-- 📂 Floating Tools Button (Right Center) -->
-<div style="position: fixed; top: 50%; right: 20px; transform: translateY(-50%); z-index: 9999;">
-  <button onclick="showBottomPopup()" class="btn-confirm">📂 Tools</button>
-</div>
+    function removeBanned(num) {
+      bannedSet.delete(num);
+      localStorage.setItem("bannedNumbers", JSON.stringify([...bannedSet]));
+      updateBannedDisplay();
+    }
 
-<!-- 🔳 Tools Popup -->
-<div id="bottomLinkPopup" class="popup" onclick="hideBottomPopup(event)">
-  <div class="popup-content" onclick="event.stopPropagation()" style="display: flex; flex-direction: column; align-items: stretch; gap: 12px; width: 250px;">
-    <span onclick="hideBottomPopup()" style="align-self: flex-end; cursor: pointer;">❌</span>
-    <h3 style="text-align: center;">🔗 Useful Tools</h3>
-    <button class="btn-list" onclick="window.open('https://infotechlifafa.com/lifafa/num.php', '_blank')">💼 Infotech</button>
-    <button class="btn-save" onclick="window.open('https://snapwallet.in/view-number-tools', '_blank')">💰 Snapwallet</button>
-    <button class="btn-mono" onclick="window.open('https://fastxlifafa.in/lifafa/numberarea.php', '_blank')">🚀 FastXl</button>
-  </div>
-</div>
-
-
-<div class="toast" id="toast"></div>
-
-<script>
-let userData = { date: '', list: [], original: '', nextIndex: 0 };
-
-function showToast(msg, color = "#00c853", reload = false, withLoader = false) {
-  const toast = document.getElementById("toast");
-  toast.innerHTML = withLoader ? `<div>${msg}</div><div class="loader"></div>` : msg;
-  toast.style.background = color;
-  toast.style.display = "block";
-  setTimeout(() => {
-    toast.style.display = "none";
-    if (reload) location.reload();
-  }, withLoader ? 2000 : 1500);
-}
-
-function toggleSection(mode) {
-  document.getElementById("codeSection").style.display = mode === "home" ? "flex" : "none";
-  document.getElementById("outputSection").style.display = mode === "home" ? "block" : "none";
-  document.getElementById("monoInput").style.display = mode === "mono" ? "block" : "none";
-  document.getElementById("monoRunBtn").style.display = mode === "mono" ? "inline-block" : "none";
-  document.getElementById("monoResult").style.display = "none";
-  document.getElementById("copyMono").style.display = "none";
-  document.getElementById("historyOutput").style.display = "none";
-  if (mode === "history") showHistory();
-  if (mode === "list") document.getElementById("listPopup").style.display = "flex";
-}
-
-function submitListPopup() {
-  const date = document.getElementById("popupDateInput").value.trim();
-  const listText = document.getElementById("popupListInput").value.trim();
-  const lines = listText.split("\n");
-  if (!date || lines.length === 0) return showToast("❌ Date ya List missing!", "#ff1744");
-
-  let cleaned = [];
-  for (let line of lines) {
-    line = line.trim();
-    if (!line) continue;
-    let parts = line.split(/\s+/);
-    let serial = parseInt(parts[0]);
-    if (!isNaN(serial)) {
-      if (line.toLowerCase().includes("del")) {
-        cleaned.push({ serial, value: "deleted" });
-      } else {
-        cleaned.push({ serial, value: parts[parts.length - 1] });
+    function clearBanned() {
+      if (confirm("Clear all banned numbers?")) {
+        bannedSet.clear();
+        localStorage.removeItem("bannedNumbers");
+        updateBannedDisplay();
       }
     }
-  }
 
-  userData = {
-    date,
-    list: cleaned,
-    original: listText,
-    nextIndex: 0
-  };
-  localStorage.setItem("amit_user_data", JSON.stringify(userData));
-  showToast("✅ List saved!", "#00c853", true, true);
-  document.getElementById("listPopup").style.display = "none";
-}
+    function clean() {
+      const raw = document.getElementById("inputNumbers").value.trim().split("\n").map(x => x.trim()).filter(Boolean);
+      const total = raw.length;
+      const cleaned = raw.filter(n => !bannedSet.has(n));
+      const removed = total - cleaned.length;
 
-function insertCode() {
-  const code = document.getElementById("codeInput").value.trim();
-  const number = document.getElementById("numberInput").value.trim();
-  if (!code || !number || (code.length !== 8 && code.length !== 9) || isNaN(number)) {
-    showToast("❌ Format: ABC123456 + 2300", "#ff1744");
-    return;
-  }
-
-  for (let i = userData.nextIndex; i < userData.list.length; i++) {
-    let item = userData.list[i];
-    if (item.value !== "deleted" && !item.value.includes(" ")) {
-      item.value = `${code}   ${number}   ${item.value}`;
-      userData.nextIndex = i + 1;
-      localStorage.setItem("amit_user_data", JSON.stringify(userData));
-      showToast(`✅ Code saved!`, "#00c853", true, true);
-      showList();
-      return;
+      document.getElementById("outputBox").textContent = cleaned.join(", ");
+      document.getElementById("statsBox").innerText =
+        `🧾 Total Input: ${total}\n🚫 Banned Removed: ${removed}\n✅ Final Cleaned: ${cleaned.length}`;
     }
-  }
-  showToast("⚠️ No space left to insert.", "#ff9100");
-}
 
-function showList() {
-  const saved = localStorage.getItem("amit_user_data");
-  const resultEl = document.getElementById("result");
-  if (!saved) {
-    resultEl.innerText = "No data.";
-    return;
-  }
-  const data = JSON.parse(saved);
-  let output = `**${data.date}**\n\n****\n\n`;
-  for (let item of data.list) {
-    let val = item.value.replace(/\b([A-Za-z0-9]{8,9})\b/g, "`$1`");
-    output += `${item.serial}.   ${val}\n\n`;
-  }
-  resultEl.innerText = output;
-  document.getElementById("copyBtn").style.display = "inline-block";
-}
-
-function copyResult() {
-  const text = document.getElementById("result").innerText;
-  navigator.clipboard.writeText(text).then(() => showToast("📋 Copied!", "#00c853"));
-}
-
-function runMono() {
-  const lines = document.getElementById("monoInput").value.trim().split("\n");
-  let output = lines.map(line => line.trim()).filter(line => line).map(line => line.replace(/\b([A-Za-z0-9]{8,9})\b/, "`$1`")).join("\n\n");
-  document.getElementById("monoResult").innerText = output;
-  document.getElementById("monoResult").style.display = "block";
-  document.getElementById("copyMono").style.display = "inline-block";
-  showToast("✅ Converted to mono");
-}
-
-function copyMonoResult() {
-  const text = document.getElementById("monoResult").innerText;
-  navigator.clipboard.writeText(text).then(() => showToast("📋 Mono Copied!", "#00c853"));
-}
-
-function autoFocusNumber() {
-  const codeField = document.getElementById("codeInput");
-  const numberField = document.getElementById("numberInput");
-  if (codeField.value.trim().length >= 8) numberField.focus();
-}
-
-function saveUpdatedListToHistory() {
-  const saved = localStorage.getItem("amit_user_data");
-  if (!saved) return showToast("❌ No list to save!");
-  const data = JSON.parse(saved);
-  const output = document.getElementById("result").innerText.trim();
-  if (!output) return showToast("⚠️ Nothing to save.");
-  let history = JSON.parse(localStorage.getItem("amit_final_history") || "[]");
-  history.unshift({ date: data.date, output });
-  localStorage.setItem("amit_final_history", JSON.stringify(history));
-  showToast("✅ Saved to history!");
-}
-
-function showHistory() {
-  const container = document.getElementById("historyOutput");
-  let history = JSON.parse(localStorage.getItem("amit_final_history") || "[]");
-
-  if (!history.length) {
-    container.innerHTML = "📭 No saved history.";
-  } else {
-    container.innerHTML = `<h3 style="margin-bottom:15px;">📜 Saved Lists:</h3>` +
-      history.map((h, i) =>
-        `<div style="display: flex; align-items: center; gap: 15px; background: #000; padding: 10px 15px; border-radius: 8px; margin-bottom: 8px; justify-content: space-between; flex-wrap: wrap;">
-          <span style="font-weight: bold;">📅 ${h.date}</span>
-          <span style="display: flex; gap: 10px;">
-            <button onclick="navigator.clipboard.writeText(\`${h.output}\`).then(()=>showToast('📋 Copied!', '#00c853'))" class="btn-copy">📋</button>
-            <button onclick="deleteHistory(${i})" style="background:#d32f2f; color:#fff; border:none; padding:10px 15px; border-radius:8px;">❌</button>
-          </span>
-        </div>`
-      ).join("");
-  }
-
-  container.style.display = "block";
-}
-
-function deleteHistory(i) {
-  let history = JSON.parse(localStorage.getItem("amit_final_history") || "[]");
-  history.splice(i, 1);
-  localStorage.setItem("amit_final_history", JSON.stringify(history));
-  showToast("❌ Deleted!", "#d32f2f");
-  showHistory();
-}
-
-function showUserListPopup() {
-  const saved = localStorage.getItem("amit_user_data");
-  const box = document.getElementById("userListContent");
-  if (!saved) {
-    box.innerText = "❌ No list saved yet.";
-  } else {
-    const data = JSON.parse(saved);
-    box.innerText = data.original || "❌ Original list not found.";
-  }
-  document.getElementById("userListPopup").style.display = "flex";
-}
-
-function copyUserList() {
-  const text = document.getElementById("userListContent").innerText;
-  navigator.clipboard.writeText(text).then(() => showToast("📋 Userlist copied!", "#00c853"));
-}
-
-function showBottomPopup() {
-  document.getElementById('bottomLinkPopup').style.display = 'flex';
-}
-function hideBottomPopup(e) {
-  document.getElementById('bottomLinkPopup').style.display = 'none';
-}
-
-window.onload = () => {
-  const saved = localStorage.getItem("amit_user_data");
-  if (saved) {
-    userData = JSON.parse(saved);
-    showList();
-  }
-  document.getElementById("toolSection").style.display = "block";
-  document.getElementById("codeSection").style.display = "flex";
-};
-
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', function () {
-    navigator.serviceWorker.register('sw.js').then(function (registration) {
-      console.log('ServiceWorker registered: ', registration);
-    }).catch(function (error) {
-      console.log('ServiceWorker registration failed: ', error);
-    });
-  });
-}
-</script>
+    function copyOutput() {
+      const txt = document.getElementById("outputBox").textContent;
+      navigator.clipboard.writeText(txt).then(() => {
+        alert("✅ Cleaned numbers copied!");
+      });
+    }
+  </script>
 
 </body>
 </html>
