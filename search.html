@@ -1,71 +1,11 @@
+<!-- link.html -->
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
   <meta charset="UTF-8">
-  <title>YouTube</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <style>
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      background: linear-gradient(to right, #e8f0fe, #ffffff);
-      margin: 0;
-      padding: 40px 20px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-    h1 {
-      color: #d62828;
-      margin-bottom: 20px;
-    }
-    input {
-      padding: 12px;
-      font-size: 16px;
-      width: 90%;
-      max-width: 400px;
-      border: 2px solid #ccc;
-      border-radius: 8px;
-      outline: none;
-    }
-    button {
-      margin-top: 15px;
-      padding: 12px 20px;
-      font-size: 16px;
-      background-color: #0077ff;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: background 0.3s ease;
-    }
-    button:hover {
-      background-color: #005bd1;
-    }
-    footer {
-      margin-top: 40px;
-      color: #666;
-      font-size: 14px;
-    }
-  </style>
+  <title>Redirecting...</title>
+  <meta http-equiv="refresh" content="0; url=https://amittgofficial.github.io/search">
 </head>
 <body>
-  <h1>🔍 YouTube</h1>
-  <input type="text" id="searchInput" placeholder="Enter a tag or keyword (e.g. tech, gaming, news)" />
-  <button onclick="searchYouTube()">Search on YouTube</button>
-
-  <footer>Powered by YouTube • No API Required</footer>
-
-  <script>
-    function searchYouTube() {
-      const query = document.getElementById('searchInput').value.trim();
-      if (!query) return alert("Please enter a search term or tag.");
-
-      // YouTube search + last hour filter encoded parameter
-      const encodedQuery = encodeURIComponent(query);
-      const lastHourURL = `https://www.youtube.com/results?search_query=${encodedQuery}&sp=EgIIAQ%253D%253D`;
-
-      window.open(lastHourURL, '_blank');
-    }
-  </script>
 </body>
 </html>
