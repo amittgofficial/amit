@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Video Tracker</title>
+  <title>Video Tracker </title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
     body {
@@ -19,13 +19,16 @@
     }
 
     textarea {
-      width: 95%;
+      width: 90%;
       height: 120px;
       padding: 12px;
       font-size: 15px;
       border-radius: 8px;
       border: none;
       margin-bottom: 12px;
+      background: #1e1e1e;
+      color: #fff;
+      resize: vertical;
     }
 
     button {
@@ -33,14 +36,15 @@
       padding: 12px;
       font-size: 16px;
       background: #ff0000;
-      color: #fff;
+      color: #cc0;
       border: none;
       border-radius: 8px;
       cursor: pointer;
+      transition: background 0.2s ease;
     }
 
     button:hover {
-      background: #4ea;
+      background: #4ea3;
     }
 
     .video-line {
@@ -51,13 +55,18 @@
       border-radius: 10px;
       padding: 8px;
       margin-top: 12px;
-      animation: fadeIn 0.3s ease-in-out;
+      animation: fadeIn 0.2s ease-in;
     }
 
     .video-line img {
       width: 100px;
-      height: auto;
       border-radius: 6px;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+    }
+
+    .video-line img:hover {
+      transform: scale(1.05);
     }
 
     .video-title {
@@ -67,18 +76,22 @@
     }
 
     .video-title a {
-      color: #4ea3ff;
+      color: #4ea;
+      text-decoration: none;
+    }
+
+    .video-title a:hover {
       text-decoration: underline;
     }
 
     .serial-number {
-      color: #cc0;
+      color: #ffcc00;
       font-weight: bold;
-      margin-right: 6px;
+      margin-right: 5px;
     }
 
     @keyframes fadeIn {
-      from {opacity: 0; transform: translateY(10px);}
+      from {opacity: 0; transform: translateY(8px);}
       to {opacity: 1; transform: translateY(0);}
     }
   </style>
@@ -92,53 +105,54 @@
 
   <div id="result"></div>
 
-  <script>
-    function getVideoID(url) {
-      const regExp = /(?:youtu\.be\/|youtube\.com\/(?:watch\?(?:.*&)?v=|embed\/|v\/))([^?&\s]+)/;
-      const match = url.match(regExp);
-      return (match && match[1]) ? match[1] : null;
-    }
+<script>
+  function getVideoID(url) {
+    const match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\\?v=|embed\/|v\/))([\w-]{11})/);
+    return match ? match[1] : null;
+  }
 
-    async function fetchVideos() {
-      const input = document.getElementById("youtubeLinks").value.trim();
-      const lines = input.split("\n").filter(Boolean);
-      const resultDiv = document.getElementById("result");
-      resultDiv.innerHTML = "";
+  async function fetchVideos() {
+    const input = document.getElementById("youtubeLinks").value.trim();
+    const lines = input.split("\n").filter(Boolean);
+    const resultDiv = document.getElementById("result");
+    resultDiv.innerHTML = "";
 
-      for (const line of lines) {
-        const parts = line.trim().split(/\s+/);
-        const serial = parts[0];
-        const url = parts[1];
-        const videoID = getVideoID(url);
+    for (const line of lines) {
+      const [serial, url] = line.trim().split(/\s+/);
+      const videoID = getVideoID(url);
+      if (!videoID) continue;
 
-        if (!videoID) continue;
+      const thumbnailURL = `https://img.youtube.com/vi/${videoID}/hqdefault.jpg`;
+      const div = document.createElement("div");
+      div.className = "video-line";
 
-        const thumbnailURL = `https://img.youtube.com/vi/${videoID}/hqdefault.jpg`;
-
-        try {
-          const res = await fetch(`https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${videoID}&format=json`);
-          const data = await res.json();
-          const videoTitle = `<span class="serial-number">${serial}.</span> ${data.title}`;
-
-          const div = document.createElement("div");
-          div.className = "video-line";
-          div.innerHTML = `
-            <a href="${url}" target="_blank"><img src="${thumbnailURL}" alt="Thumbnail"></a>
-            <div class="video-title">${videoTitle}</div>
-          `;
-          resultDiv.appendChild(div);
-        } catch {
-          const div = document.createElement("div");
-          div.className = "video-line";
-          div.innerHTML = `
-            <a href="${url}" target="_blank"><img src="${thumbnailURL}" alt="Thumbnail"></a>
-            <div class="video-title"><span class="serial-number">${serial}.</span> <a href="${url}" target="_blank">${url}</a></div>
-          `;
-          resultDiv.appendChild(div);
-        }
+      try {
+        const res = await fetch(`https://noembed.com/embed?url=https://www.youtube.com/watch?v=${videoID}`);
+        const data = await res.json();
+        const title = data.title && data.title !== "null" ? data.title : `<a href="${url}" target="_blank">${url}</a>`;
+        div.innerHTML = `
+          <a href="https://www.youtube.com/watch?v=${videoID}" target="_blank">
+            <img src="${thumbnailURL}" alt="Thumbnail">
+          </a>
+          <div class="video-title">
+            <span class="serial-number">${serial}.</span> ${title}
+          </div>
+        `;
+      } catch {
+        div.innerHTML = `
+          <a href="https://www.youtube.com/watch?v=${videoID}" target="_blank">
+            <img src="${thumbnailURL}" alt="Thumbnail">
+          </a>
+          <div class="video-title">
+            <span class="serial-number">${serial}.</span> <a href="${url}" target="_blank">${url}</a>
+          </div>
+        `;
       }
+
+      resultDiv.appendChild(div);
     }
-  </script>
+  }
+</script>
 
 </body>
 </html>
