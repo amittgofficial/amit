@@ -1,158 +1,244 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
   <title>Video Tracker </title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      background: #121212;
-      color: #fff;
-      padding: 20px;
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
     }
 
-    h1 {
+    body {
+      background: #1e1e1e;
+      color: #fdfdfd;
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 15px;
+      font-smooth: always;
+      -webkit-font-smoothing: antialiased;
+      transition: background 0.2s ease-in-out;
+    }
+
+    h2 {
       text-align: center;
-      font-size: 22px;
-      margin-bottom: 20px;
+      margin-top: 10px;
+      color: #d32f2f;
+      font-size: 20px;
+      font-weight: 600;
     }
 
     textarea {
-      width: 90%;
-      height: 120px;
-      padding: 12px;
+      width: 100%;
       font-size: 15px;
+      padding: 10px;
       border-radius: 8px;
-      border: none;
-      margin-bottom: 12px;
-      background: #1e1e1e;
-      color: #fff;
+      border: 1px solid #ccc;
+      background: #fdfdfd;
+      color: #222;
       resize: vertical;
+      height: 120px;
+      outline: none;
+      transition: border 0.2s ease;
+    }
+
+    textarea:focus {
+      border-color: #cc0000;
     }
 
     button {
-      width: 95%;
-      padding: 12px;
+      width: 100%;
+      padding: 11px;
       font-size: 16px;
-      background: #ff0000;
-      color: #cc0;
+      background-color: #cc0000;
+      color: white;
       border: none;
       border-radius: 8px;
+      margin-top: 12px;
       cursor: pointer;
       transition: background 0.2s ease;
     }
 
     button:hover {
-      background: #4ea3;
+      background-color: #b30000;
     }
 
-    .video-line {
+    #loader {
+      text-align: center;
+      display: none;
+      font-size: 16px;
+      color: #cc0000;
+      margin-top: 15px;
+    }
+
+    .result {
+      margin-top: 18px;
+    }
+
+ .video-block {
       display: flex;
       align-items: center;
-      gap: 12px;
       background: #1e1e1e;
+      border: 1px solid #333;
+      border-left: 4px solid #cc0000;
       border-radius: 10px;
-      padding: 8px;
-      margin-top: 12px;
-      animation: fadeIn 0.2s ease-in;
+      padding: 10px;
+      margin-bottom: 12px;
+      box-shadow: 0 2px 6px rgba(255, 255, 255, 0.05);
     }
 
-    .video-line img {
-      width: 100px;
+    .thumb {
+      width: 85px;
+      height: 85px;
       border-radius: 6px;
+      object-fit: cover;
       cursor: pointer;
-      transition: transform 0.2s ease;
     }
 
-    .video-line img:hover {
-      transform: scale(1.05);
+    .video-info {
+      margin-left: 10px;
+      flex-grow: 1;
     }
 
     .video-title {
-      font-size: 15px;
-      flex: 1;
-      word-break: break-word;
+      font-weight: 500;
+      font-size: 13px;
+      line-height: 1.3em;
     }
 
-    .video-title a {
-      color: #4ea;
+    .not-found {
+      color: #e53935;
+      font-weight: 500;
+      font-size: 13px;
+    }
+
+    .video-serial {
+      color: #f1c40f;
+      font-weight: bold;
+      margin-right: 6px;
+    }
+
+    a {
+      font-size: 12px;
+      color: #007bff;
       text-decoration: none;
     }
 
-    .video-title a:hover {
+    a:hover {
       text-decoration: underline;
     }
 
-    .serial-number {
-      color: #ffcc00;
-      font-weight: bold;
-      margin-right: 5px;
-    }
+    @media (max-width: 480px) {
+      .thumb {
+        width: 70px;
+        height: 70px;
+      }
 
-    @keyframes fadeIn {
-      from {opacity: 0; transform: translateY(8px);}
-      to {opacity: 1; transform: translateY(0);}
+      .video-title {
+        font-size: 12px;
+      }
+
+      button {
+        font-size: 15px;
+      }
+
+      textarea {
+        font-size: 14px;
+      }
     }
   </style>
 </head>
 <body>
 
-  <h1>Video Tracker </h1>
+  <h2>Video Tracker</h2>
 
-  <textarea id="youtubeLinks" placeholder="Example:\n1 https://youtu.be/abc123\n2 https://youtu.be/xyz456"></textarea>
-  <button onclick="fetchVideos()">Track</button>
+  <textarea id="ytLinks" placeholder="1 https://youtu.be/BHSuKat96wI&#10;2 https://youtu.be/fakeid123"></textarea>
 
-  <div id="result"></div>
+  <button onclick="checkVideos()">Track</button>
 
-<script>
-  function getVideoID(url) {
-    const match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\\?v=|embed\/|v\/))([\w-]{11})/);
-    return match ? match[1] : null;
-  }
+  <div id="loader">⏳ Tracking please wait...</div>
 
-  async function fetchVideos() {
-    const input = document.getElementById("youtubeLinks").value.trim();
-    const lines = input.split("\n").filter(Boolean);
-    const resultDiv = document.getElementById("result");
-    resultDiv.innerHTML = "";
+  <div id="results" class="result"></div>
 
-    for (const line of lines) {
-      const [serial, url] = line.trim().split(/\s+/);
-      const videoID = getVideoID(url);
-      if (!videoID) continue;
-
-      const thumbnailURL = `https://img.youtube.com/vi/${videoID}/hqdefault.jpg`;
-      const div = document.createElement("div");
-      div.className = "video-line";
-
-      try {
-        const res = await fetch(`https://noembed.com/embed?url=https://www.youtube.com/watch?v=${videoID}`);
-        const data = await res.json();
-        const title = data.title && data.title !== "null" ? data.title : `<a href="${url}" target="_blank">${url}</a>`;
-        div.innerHTML = `
-          <a href="https://www.youtube.com/watch?v=${videoID}" target="_blank">
-            <img src="${thumbnailURL}" alt="Thumbnail">
-          </a>
-          <div class="video-title">
-            <span class="serial-number">${serial}.</span> ${title}
-          </div>
-        `;
-      } catch {
-        div.innerHTML = `
-          <a href="https://www.youtube.com/watch?v=${videoID}" target="_blank">
-            <img src="${thumbnailURL}" alt="Thumbnail">
-          </a>
-          <div class="video-title">
-            <span class="serial-number">${serial}.</span> <a href="${url}" target="_blank">${url}</a>
-          </div>
-        `;
-      }
-
-      resultDiv.appendChild(div);
+  <script>
+    function extractVideoID(url) {
+      const regExp = /(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|embed)\/|.*[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
+      const match = url.match(regExp);
+      return match ? match[1] : null;
     }
-  }
-</script>
+
+    async function checkVideos() {
+      const input = document.getElementById("ytLinks").value.trim();
+      const lines = input.split("\n");
+      const resultsDiv = document.getElementById("results");
+      const loader = document.getElementById("loader");
+      resultsDiv.innerHTML = "";
+      loader.style.display = "block"; // Show loader
+
+      const tasks = lines.map((line, i) => {
+        line = line.trim();
+        if (!line) return null;
+
+        let serial = "";
+        let url = line;
+
+        const match = line.match(/^(\d+)\.?\s+(https?:\/\/[^\s]+)$/);
+        if (match) {
+          serial = match[1];
+          url = match[2];
+        } else {
+          serial = (i + 1).toString();
+        }
+
+        const videoId = extractVideoID(url);
+        const block = document.createElement("div");
+        block.className = "video-block";
+
+        if (!videoId) {
+          block.innerHTML = `
+            <div class="video-title">
+              <span class="video-serial">${serial}</span>
+              <span class="not-found">❌ Not Found</span><br>
+              <a href="${url}" target="_blank">${url}</a>
+            </div>
+          `;
+          return block;
+        }
+
+        return fetch(`https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${videoId}&format=json`)
+          .then(res => res.json())
+          .then(data => {
+            block.innerHTML = `
+              <img src="https://img.youtube.com/vi/${videoId}/hqdefault.jpg" class="thumb" onclick="window.open('https://youtu.be/${videoId}', '_blank')">
+              <div class="video-info">
+                <div class="video-title">
+                  <span class="video-serial">${serial}</span>${data.title}
+                </div>
+              </div>
+            `;
+            return block;
+          })
+          .catch(() => {
+            block.innerHTML = `
+              <div class="video-title">
+                <span class="video-serial">${serial}</span>
+                <span class="not-found">❌ Not Found</span><br>
+                <a href="${url}" target="_blank">${url}</a>
+              </div>
+            `;
+            return block;
+          });
+      });
+
+      const allBlocks = await Promise.all(tasks.map(p => p instanceof Promise ? p : Promise.resolve(p)));
+      allBlocks.forEach(block => {
+        if (block) resultsDiv.appendChild(block);
+      });
+
+      loader.style.display = "none"; // Hide loader
+    }
+  </script>
 
 </body>
 </html>
