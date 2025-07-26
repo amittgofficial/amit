@@ -1,17 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
-<link rel="manifest" href="manifest.json" />
-<meta name="theme-color" content="#1e1e2f" />
-<link rel="apple-touch-icon" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhk1ursjpZ9AO8wJDlsVcnr_5Phr5gcijEc7s4d4Ctg4IgK_gZuWpPMZ9T1Jt7yEnPMIsI3wOzBhcs9skfpxwizQ5YJByK-4paTxKViuDblMIqHdo03vB6bJ6vZT3gsBnPGuYq83n2APUzLzWrZD1oh84smw4y0UQec_Pu627s4oiumTUR_vtc0Hl5kd_Ae/s320/1000004890.png">
-<meta name="apple-mobile-web-app-capable" content="yes" />
-  
-
-
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>AmitTG</title>
+
+  <!-- Meta and Manifest -->
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#1e1e2f" />
+  <link rel="apple-touch-icon" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhk1ursjpZ9AO8wJDlsVcnr_5Phr5gcijEc7s4d4Ctg4IgK_gZuWpPMZ9T1Jt7yEnPMIsI3wOzBhcs9skfpxwizQ5YJByK-4paTxKViuDblMIqHdo03vB6bJ6vZT3gsBnPGuYq83n2APUzLzWrZD1oh84smw4y0UQec_Pu627s4oiumTUR_vtc0Hl5kd_Ae/s320/1000004890.png">
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+
+  <!-- Styles -->
   <style>
     :root {
       --bg: #121212;
@@ -94,6 +94,27 @@
       transform: scale(0.96);
     }
 
+    #toolFrame {
+      display: none;
+      flex: 1;
+      width: 100%;
+      border: none;
+    }
+
+    #homeBtn {
+      display: none;
+      position: fixed;
+      top: 10px;
+      left: 10px;
+      z-index: 999;
+      background: #333;
+      color: white;
+      border: none;
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 16px;
+    }
+
     @media (min-width: 481px) {
       body::before {
         content: "Please open on a mobile device 📱";
@@ -118,15 +139,21 @@
 </head>
 <body>
 
+  <!-- Home Button -->
+  <button id="homeBtn" onclick="goBackHome()">← Home</button>
+
+  <!-- Heading -->
   <div class="heading">
     <h1>Welcome</h1>
     <h2>TOOL MANAGEMENT</h2>
-
   </div>
+
+  <!-- Iframe for hidden tools -->
+  <iframe id="toolFrame"></iframe>
 
   <div class="spacer"></div>
 
-
+  <!-- Tool Buttons -->
   <div class="button-grid">
     <button class="btn" onclick="handleClick(this, 'code.html')">Code Setup</button>
     <button class="btn" onclick="handleClick(this, 'numbertool.html')">NUMBER TOOL</button>
@@ -138,23 +165,48 @@
     <button class="btn" onclick="handleClick(this, 'ban.html')">Ban</button>
   </div>
 
-
+  <!-- Script -->
   <script>
     function handleClick(button, url) {
+      const directPages = ['infotech.html', 'snap.html'];
+
       button.classList.add('clicked');
       setTimeout(() => {
         button.classList.remove('clicked');
-        window.location.href = url;
+
+        if (directPages.includes(url)) {
+          // Allow normal redirect for specific pages
+          window.location.href = url;
+        } else {
+          // Load page in iframe
+          document.querySelector('.heading').style.display = 'none';
+          document.querySelector('.button-grid').style.display = 'none';
+
+          const frame = document.getElementById('toolFrame');
+          frame.style.display = 'block';
+          frame.src = url;
+
+          document.getElementById('homeBtn').style.display = 'block';
+        }
       }, 200);
     }
 
-if ("serviceWorker" in navigator) {
-    navigator.serviceWorker.register("service-worker.js")
-      .then(() => console.log("✅ Service Worker registered"))
-      .catch((e) => console.error("SW registration failed:", e));
-  }
+    function goBackHome() {
+      document.getElementById('toolFrame').style.display = 'none';
+      document.getElementById('toolFrame').src = "";
 
+      document.querySelector('.heading').style.display = 'block';
+      document.querySelector('.button-grid').style.display = 'grid';
 
+      document.getElementById('homeBtn').style.display = 'none';
+    }
+
+    // Optional: Register service worker
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("service-worker.js")
+        .then(() => console.log("✅ Service Worker registered"))
+        .catch((e) => console.error("SW registration failed:", e));
+    }
   </script>
 
 </body>
