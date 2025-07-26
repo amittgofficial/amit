@@ -5,13 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>AmitTG</title>
 
-  <!-- Meta and Manifest -->
+  <!-- Manifest and icons -->
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#1e1e2f" />
   <link rel="apple-touch-icon" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhk1ursjpZ9AO8wJDlsVcnr_5Phr5gcijEc7s4d4Ctg4IgK_gZuWpPMZ9T1Jt7yEnPMIsI3wOzBhcs9skfpxwizQ5YJByK-4paTxKViuDblMIqHdo03vB6bJ6vZT3gsBnPGuYq83n2APUzLzWrZD1oh84smw4y0UQec_Pu627s4oiumTUR_vtc0Hl5kd_Ae/s320/1000004890.png">
   <meta name="apple-mobile-web-app-capable" content="yes" />
 
-  <!-- Styles -->
   <style>
     :root {
       --bg: #121212;
@@ -24,15 +23,18 @@
       box-sizing: border-box;
     }
 
-    body {
-      background: var(--bg);
-      color: var(--text);
-      font-family: 'Segoe UI', sans-serif;
+    html, body {
       margin: 0;
       padding: 0;
+      height: 100%;
+      font-family: 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    body {
       display: flex;
       flex-direction: column;
-      min-height: 100vh;
       max-width: 480px;
       margin: auto;
     }
@@ -58,10 +60,6 @@
       -webkit-text-fill-color: transparent;
       margin: 8px 0 0;
       text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
-    }
-
-    .spacer {
-      flex: 1;
     }
 
     .button-grid {
@@ -94,11 +92,15 @@
       transform: scale(0.96);
     }
 
-    #toolFrame {
+    iframe#toolFrame {
       display: none;
-      flex: 1;
-      width: 100%;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
       border: none;
+      z-index: 10;
     }
 
     #homeBtn {
@@ -106,7 +108,7 @@
       position: fixed;
       top: 10px;
       left: 10px;
-      z-index: 999;
+      z-index: 20;
       background: #333;
       color: white;
       border: none;
@@ -139,7 +141,7 @@
 </head>
 <body>
 
-  <!-- Home Button -->
+  <!-- Home button -->
   <button id="homeBtn" onclick="goBackHome()">← Home</button>
 
   <!-- Heading -->
@@ -148,12 +150,10 @@
     <h2>TOOL MANAGEMENT</h2>
   </div>
 
-  <!-- Iframe for hidden tools -->
+  <!-- Fullscreen iframe -->
   <iframe id="toolFrame"></iframe>
 
-  <div class="spacer"></div>
-
-  <!-- Tool Buttons -->
+  <!-- Button Grid -->
   <div class="button-grid">
     <button class="btn" onclick="handleClick(this, 'code.html')">Code Setup</button>
     <button class="btn" onclick="handleClick(this, 'numbertool.html')">NUMBER TOOL</button>
@@ -165,7 +165,7 @@
     <button class="btn" onclick="handleClick(this, 'ban.html')">Ban</button>
   </div>
 
-  <!-- Script -->
+  <!-- Scripts -->
   <script>
     function handleClick(button, url) {
       const directPages = ['infotech.html', 'snap.html'];
@@ -175,10 +175,9 @@
         button.classList.remove('clicked');
 
         if (directPages.includes(url)) {
-          // Allow normal redirect for specific pages
-          window.location.href = url;
+          window.location.href = url; // direct full page navigation
         } else {
-          // Load page in iframe
+          // Fullscreen iframe load
           document.querySelector('.heading').style.display = 'none';
           document.querySelector('.button-grid').style.display = 'none';
 
@@ -201,7 +200,7 @@
       document.getElementById('homeBtn').style.display = 'none';
     }
 
-    // Optional: Register service worker
+    // Optional: Service worker registration
     if ("serviceWorker" in navigator) {
       navigator.serviceWorker.register("service-worker.js")
         .then(() => console.log("✅ Service Worker registered"))
