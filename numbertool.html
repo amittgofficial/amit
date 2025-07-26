@@ -2,311 +2,300 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Number Tool</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
-    :root {
-      --bg-dark: #1e1e1e;
-      --text-dark: #eee;
-      --primary: #7b1fa2;
-      --accent: #26a69a;
-      --error: #ffebee;
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+      transition: all 0.3s ease-in-out;
     }
 
     body {
-      margin: 0;
+      background: radial-gradient(circle at top left, #101c40, #0f0c29, #302b63);
+      color: #fff;
       padding: 20px;
-      font-family: 'Inter', sans-serif;
-      background: var(--bg-dark);
-      color: var(--text-dark);
-      transition: 0.3s;
+      overflow-x: hidden;
+      position: relative;
     }
+
+
 
     .header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 20px;
+      text-align: center;
+      margin-bottom: 25px;
+      animation: slideDown 1s ease;
     }
 
-    .header h2 {
-      margin: 0;
-      font-size: 26px;
-      color: var(--primary);
-    }
-    
-    textarea {
-      width: 360px;
-      height: 140px;
-      padding: 10px 14px;
-      font-size: 15px;
-      border-radius: 10px;
-      border: 2px solid #666;
-      background: #2c2c2c;
-      color: red;
-      resize: none;
-      line-height: 1.0;
-    }
-    
-    .btn, .copy-btn {
-      background: var(--primary);
-      color: white;
+    #copyBtn {
+      padding: 15px 40px;
+      border-radius: 50px;
+      font-size: 22px;
+      font-weight: bold;
       border: none;
-      padding: 10px 16px;
-      margin-top: 10px;
-      border-radius: 8px;
-      font-size: 15px;
-      width: 100%;
       cursor: pointer;
+      background: linear-gradient(to right, #ff416c, #ff4b2b);
+      color: white;
+      box-shadow: 0 0 20px rgba(255, 65, 108, 0.8);
+      animation: pulse 2s infinite;
     }
 
-    .copy-btn {
-      background: var(--accent);
+    textarea {
+      width: 100%;
+      height: 150px;
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 18px;
+      color: #ff4;
+      padding: 15px;
+      font-size: 16px;
+      margin: 20px 0;
+      outline: none;
+      backdrop-filter: blur(8px);
+      animation: fadeInUp 0.7s ease;
+    }
+
+textarea:focus {
+  border: 2px solid #00ffdd;
+  box-shadow: 0 0 10px #00ffdd, 0 0 20px #00ffdd;
+}
+
+/* Highlight for each history item */
+.saved-entry {
+  border: 2px solid #00ffdd;
+  box-shadow: 0 0 8px #00ffdd;
+  transition: all 0.3s ease;
+}
+
+.saved-entry:hover {
+  box-shadow: 0 0 15px #00ffdd;
+}
+
+    .btn {
+      background: linear-gradient(45deg, #00f2fe, #4facfe);
+      padding: 12px 30px;
+      font-weight: bold;
+      border: none;
+      border-radius: 40px;
+      color: colour;
+      cursor: pointer;
+      margin: 10px 5px;
+      box-shadow: 0 0 15px rgba(0, 242, 254, 0.6);
+    }
+
+    .btn:hover {
+      transform: scale(1.06);
     }
 
     .card {
-      margin-top: 20px;
-      padding: 16px;
-      border-radius: 12px;
-      background: #2c2c2c;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 20px;
+      padding: 20px;
+      margin: 20px 0;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+      animation: fadeInUp 1s ease;
     }
 
     .label {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 10px;
+      display: block;
+    }
+
+    .copy-btn {
+      background: linear-gradient(to right, #00ff87, #60efff);
+      color: #fff;
+      padding: 10px 20px;
+      border-radius: 25px;
+      border: none;
       font-weight: bold;
-      color: var(--primary);
+      cursor: pointer;
+      box-shadow: 0 0 20px rgba(96,239,255,0.5);
+      margin-top: 10px;
     }
 
     .dup-pill {
-      background: var(--error);
-      color: #c62828;
-      padding: 8px 12px;
-      border-radius: 6px;
-      margin: 6px 0;
-      display: block;
-    }
-
-    .saved-entry {
-      background: #004d40;
-      color: white;
-      padding: 10px;
-      margin-top: 10px;
-      border-radius: 8px;
-    }
-
-    .saved-meta {
-      font-weight: 600;
-      font-size: 15px;
-      margin-bottom: 6px;
-    }
-
-    .modal-overlay {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: rgba(0,0,0,0.6);
-      display: none;
-      justify-content: center;
-      align-items: center;
-      z-index: 999;
-    }
-
-    .modal {
-      background: #2c2c2c;
-      padding: 20px;
-      border-radius: 12px;
-      width: 90%;
-      max-width: 400px;
-      color: white;
-    }
-
-    .modal h3 {
-      margin-top: 0;
-      color: var(--primary);
-    }
-
-    .modal label {
-      display: block;
-      margin-top: 10px;
-      font-weight: 600;
-    }
-
-    .modal input, .modal select {
-      width: 100%;
-      padding: 8px;
-      margin-top: 6px;
-      border-radius: 6px;
-      border: 1px solid #555;
-      background: #1e1e1e;
-      color: white;
-    }
-
-    .modal .btn-group {
-      display: flex;
-      justify-content: flex-end;
-      margin-top: 20px;
-      gap: 10px;
-    }
-
-    .modal .btn-group button {
-      flex: 1;
+      background: #ff1e56;
+      padding: 8px 15px;
+      border-radius: 25px;
+      display: inline-block;
+      margin: 5px;
+      font-size: 14px;
     }
 
     #toast {
       visibility: hidden;
       min-width: 250px;
-      margin-left: -125px;
-      background-color: #323232;
-      color: #fff;
+      background: linear-gradient(to right, #ff416c, #ff4b2b);
+      color: white;
       text-align: center;
-      border-radius: 8px;
-      padding: 12px;
+      border-radius: 30px;
+      padding: 16px;
       position: fixed;
-      z-index: 1000;
+      z-index: 999;
       left: 50%;
-      bottom: 30px;
+      bottom: 40px;
+      transform: translateX(-50%);
       font-size: 16px;
-      transition: all 0.4s ease;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.3);
     }
 
     #toast.show {
       visibility: visible;
-      bottom: 50px;
-      opacity: 1;
+      animation: fadein 0.5s, fadeout 0.5s 2.5s;
     }
 
-    @media (max-width: 600px) {
-      textarea {
-        height: 100px;
-        font-size: 14px;
-        padding: 8px 12px;
-      }
-      .btn, .copy-btn {
-        font-size: 14px;
-        padding: 10px;
-      }
-    /* Modal for confirmation */
-.modal-overlay {
-  position: fixed;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  background: rgba(0,0,0,0.6);
-  display: none;
-  justify-content: center;
-  align-items: center;
-  z-index: 999;
-}
+    @keyframes fadein {
+      from { bottom: 0; opacity: 0; }
+      to { bottom: 40px; opacity: 1; }
+    }
 
-.modal {
-  background: #2c2c2c;
-  padding: 20px;
-  border-radius: 12px;
-  width: 90%;
-  max-width: 400px;
-  color: white;
-}
+    @keyframes fadeout {
+      from { bottom: 40px; opacity: 1; }
+      to { bottom: 0; opacity: 0; }
+    }
 
-.modal h3 {
-  margin-top: 0;
-  color: var(--primary);
-}
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateY(-50px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
 
-.modal .btn-group {
-  display: flex;
-  justify-content: flex-end;
-  margin-top: 20px;
-  gap: 10px;
-}
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
 
-.modal .btn-group button {
-  flex: 1;
-}
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0px rgba(255,65,108,0.6); }
+      50% { box-shadow: 0 0 25px rgba(255,65,108,1); }
+      100% { box-shadow: 0 0 0px rgba(255,65,108,0.6); }
+    }
 
+    .bg-particles {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      background: url('https://i.gifer.com/7VE.gif') center center / cover no-repeat;
+      opacity: 0.05;
+      pointer-events: none;
+    }
+
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.6);
+      align-items: center;
+      justify-content: center;
+      z-index: 999;
+    }
+
+    .modal {
+      background: #1e1e2f;
+      padding: 25px;
+      border-radius: 20px;
+      max-width: 90%;
+      color: white;
+      box-shadow: 0 0 20px rgba(0,0,0,0.6);
+    }
+
+    .modal input, .modal select {
+      width: 100%;
+      margin: 8px 0 15px;
+      padding: 10px;
+      border-radius: 10px;
+      border: none;
+      font-size: 16px;
+    }
+
+    .btn-group {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .saved-entry {
+      background: rgba(255,255,255,0.1);
+      padding: 15px;
+      border-radius: 12px;
+      margin-bottom: 10px;
+    }
+
+    .saved-meta {
+      margin-bottom: 10px;
     }
   </style>
 </head>
 <body>
 
-  
-<div class="header">
+<div class="bg-particles"></div>
 
-  <!-- Copy Button in Header -->
-  <button id="copyBtn" class="btn">Number Tool</button>
+<div class="header">
+  <button id="copyBtn">Number Tool</button>
 </div>
 
-<!-- Text to be copied -->
 <p id="textToCopy" style="display:none;">This is the text to be copied!</p>
 
-  </div>
+<textarea id="numberInput" placeholder="Paste numbers here..."></textarea>
+<button class="btn" onclick="processNumbers()">Filter</button>
 
-  <textarea id="numberInput" placeholder="Paste numbers here..."></textarea>
-  <button class="btn" onclick="processNumbers()">Filter</button>
+<div class="card">
+  <span class="label">✅ Fresh Number: <span id="cleanCount">0</span></span>
+  <input type="hidden" id="cleanOutput">
+  <button class="copy-btn" onclick="copyToClipboard()">Copy</button>
+  <button class="btn" onclick="saveNumbers()">💾 Save</button>
+</div>
 
-  <div class="card">
-    <span class="label">✅ Fresh Number: <span id="cleanCount">0</span></span>
-    <input type="hidden" id="cleanOutput">
-    <button class="copy-btn" onclick="copyToClipboard()">📋 Copy</button>
-    <button class="btn" onclick="saveNumbers()">💾 Save</button>
-  </div>
+<div class="card">
+  <span class="label">❌ Duplicate Numbers (<span id="dupCount">0</span>):</span>
+  <div id="duplicateOutput"></div>
+</div>
 
-  <div class="card">
-    <span class="label">❌ Duplicate Number (<span id="dupCount">0</span>):</span>
-    <div id="duplicateOutput"></div>
-  </div>
+<div class="card">
+  <span class="label">🚫 Invalid Numbers (<span id="invalidCount">0</span>):</span>
+  <p id="invalidOutput"></p>
+</div>
 
-  <div class="card">
-    <span class="label">🚫 Invalid Numbers (<span id="invalidCount">0</span>):</span>
-    <p id="invalidOutput"></p>
-  </div>
-
-<!-- History Section -->
 <div class="card" id="historyCard">
   <span class="label">📂 History:</span>
   <div id="savedData"></div>
-  
-  <!-- Clear All Button -->
   <button class="btn" id="clearAllBtn" style="background:#c62828; margin-top: 10px;">Clear All</button>
 </div>
 
-  <!-- Modal -->
-  <div class="modal-overlay" id="saveModal">
-    <div class="modal">
-      <h3>💾 Save Entry</h3>
-      <label>Name:</label>
-      <input type="text" id="modalNameInput">
-
-      <label>Date:</label>
-      <div style="display:flex; gap: 10px;">
-        <select id="modalDay" style="flex:1">
-          <option disabled selected value="">Day</option>
-          <!-- Days 1 to 31 will be rendered here -->
-        </select>
-
-        <select id="modalMonth" style="flex:2">
-          <option disabled selected value="">Month</option>
-          <option value="Jan">Jan</option>
-          <option value="Feb">Feb</option>
-          <option value="Mar">Mar</option>
-          <option value="Apr">Apr</option>
-          <option value="May">May</option>
-          <option value="Jun">Jun</option>
-          <option value="Jul">Jul</option>
-          <option value="Aug">Aug</option>
-          <option value="Sep">Sep</option>
-          <option value="Oct">Oct</option>
-          <option value="Nov">Nov</option>
-          <option value="Dec">Dec</option>
-        </select>
-      </div>
-
-      <div class="btn-group">
-        <button class="btn" onclick="closeModal()">❌ Cancel</button>
-        <button class="btn" onclick="confirmSave()">✅ Save</button>
-      </div>
+<div class="modal-overlay" id="saveModal">
+  <div class="modal">
+    <h3>💾 Save Entry</h3>
+    <label>Name:</label>
+    <input type="text" id="modalNameInput">
+    <label>Date:</label>
+    <div style="display:flex; gap: 10px;">
+      <select id="modalDay" style="flex:1">
+        <option disabled selected value="">Day</option>
+      </select>
+      <select id="modalMonth" style="flex:2">
+        <option disabled selected value="">Month</option>
+        <option value="Jan">Jan</option><option value="Feb">Feb</option><option value="Mar">Mar</option>
+        <option value="Apr">Apr</option><option value="May">May</option><option value="Jun">Jun</option>
+        <option value="Jul">Jul</option><option value="Aug">Aug</option><option value="Sep">Sep</option>
+        <option value="Oct">Oct</option><option value="Nov">Nov</option><option value="Dec">Dec</option>
+      </select>
+    </div>
+    <div class="btn-group">
+      <button class="btn" onclick="closeModal()">❌ Cancel</button>
+      <button class="btn" onclick="confirmSave()">✅ Save</button>
     </div>
   </div>
+</div>
 
-<!-- Modal for Confirmation -->
 <div class="modal-overlay" id="clearAllModal">
   <div class="modal">
     <h3>⚠️ Are you sure you want to clear all history?</h3>
@@ -317,60 +306,19 @@
   </div>
 </div>
 
-  <!-- Toast -->
-  <div id="toast"></div>
+<div id="toast"></div>
 
- 
-  <script>
-  let detectedName = "";
-  let saveCounter = 0;
-  let cleanedNumbers = "";
+<script>
+let detectedName = "";
+let saveCounter = 0;
+let cleanedNumbers = "";
 
-  window.onload = () => {
-    renderHistory();
-    populateDays(); 
-  };
-
-// Show confirmation modal for clearing all history
-document.getElementById("clearAllBtn").addEventListener("click", function() {
-  document.getElementById("clearAllModal").style.display = "flex";
-});
-
-// Close the confirmation modal without clearing
-function closeClearAllModal() {
-  document.getElementById("clearAllModal").style.display = "none";
-}
-
-// Function to clear all history
-function clearAllHistory() {
-  // Clear all data from localStorage
-  localStorage.removeItem("savedNumbers");
-
-  // Close the modal
-  closeClearAllModal();
-
-  // Show a toast to notify the user
-  showToast("All history cleared!");
-
-  // Re-render the history (which will now be empty)
+window.onload = () => {
   renderHistory();
-}
+  populateDays();
+};
 
-
-  
-  function populateDays() {
-    const daySelect = document.getElementById("modalDay");
-
-   
-    for (let i = 1; i <= 31; i++) {
-      const option = document.createElement("option");
-      option.value = i;
-      option.textContent = i;
-      daySelect.appendChild(option);
-    }
-  }
-
-  document.getElementById("copyBtn").addEventListener("click", function() {
+document.getElementById("copyBtn").addEventListener("click", function() {
   const textToCopy = document.getElementById("textToCopy");
   const tempInput = document.createElement("input");
   document.body.appendChild(tempInput);
@@ -381,152 +329,152 @@ function clearAllHistory() {
   showToast("✅ Text Copied!");
 });
 
+document.getElementById("clearAllBtn").addEventListener("click", function() {
+  document.getElementById("clearAllModal").style.display = "flex";
+});
+
+function closeClearAllModal() {
+  document.getElementById("clearAllModal").style.display = "none";
+}
+
+function clearAllHistory() {
+  localStorage.removeItem("savedNumbers");
+  closeClearAllModal();
+  showToast("🧹 History cleared!");
+  renderHistory();
+}
+
 function showToast(msg) {
   const toast = document.getElementById("toast");
   toast.textContent = msg;
   toast.className = "show";
-  setTimeout(() => {
-    toast.className = toast.className.replace("show", "");
-  }, 2000);
+  setTimeout(() => { toast.className = toast.className.replace("show", ""); }, 2000);
 }
 
- 
+function populateDays() {
+  const daySelect = document.getElementById("modalDay");
+  for (let i = 1; i <= 31; i++) {
+    const option = document.createElement("option");
+    option.value = i;
+    option.textContent = i;
+    daySelect.appendChild(option);
+  }
+}
 
-    function processNumbers() {
-      const input = document.getElementById("numberInput").value.trim();
-      const lines = input.split("\n");
-      detectedName = "Unnamed " + (++saveCounter);
+function processNumbers() {
+  const input = document.getElementById("numberInput").value.trim();
+  const lines = input.split("\n");
+  detectedName = "Unnamed " + (++saveCounter);
 
-      if (lines.length && lines[0].includes(":")) {
-        detectedName = lines[0].split(":")[0].trim();
-        lines.shift();
+  if (lines.length && lines[0].includes(":")) {
+    detectedName = lines[0].split(":")[0].trim();
+    lines.shift();
+  }
+
+  const numbers = lines.join("\n").split(/[\s,]+/);
+  const seen = new Set();
+  const dupes = new Set();
+  const invalid = [];
+  const cleaned = [];
+
+  for (let num of numbers) {
+    num = num.replace(/\D/g, "");
+    if (num.length === 10) {
+      if (seen.has(num)) {
+        dupes.add(num);
+      } else {
+        seen.add(num);
+        cleaned.push(num);
       }
-
-      const numbers = lines.join("\n").split(/[\s,]+/);
-      const seen = new Set();
-      const dupes = new Set();
-      const invalid = [];
-      const cleaned = [];
-
-      for (let num of numbers) {
-        num = num.replace(/\D/g, "");
-        if (num.length === 10) {
-          if (seen.has(num)) {
-            dupes.add(num);
-          } else {
-            seen.add(num);
-            cleaned.push(num);
-          }
-        } else if (num.length > 0) {
-          invalid.push(num);
-        }
-      }
-
-      document.getElementById("cleanOutput").value = cleaned.join(",");
-      document.getElementById("cleanCount").textContent = cleaned.length;
-
-      const dupDiv = document.getElementById("duplicateOutput");
-      dupDiv.innerHTML = "";
-      Array.from(dupes).forEach((n, i) => {
-        const el = document.createElement("div");
-        el.className = "dup-pill";
-        el.textContent = `${i + 1}. ${n}`;
-        dupDiv.appendChild(el);
-      });
-
-      document.getElementById("dupCount").textContent = dupes.size;
-      document.getElementById("invalidOutput").textContent = invalid.join(", ");
-      document.getElementById("invalidCount").textContent = invalid.length;
+    } else if (num.length > 0) {
+      invalid.push(num);
     }
+  }
 
-    function copyToClipboard() {
-      const val = document.getElementById("cleanOutput").value;
-      if (!val) return showToast("⚠️ No numbers found.");
-      navigator.clipboard.writeText(val).then(() => showToast("✅ Copied!"));
-    }
+  document.getElementById("cleanOutput").value = cleaned.join(",");
+  document.getElementById("cleanCount").textContent = cleaned.length;
 
-    function saveNumbers() {
-      const val = document.getElementById("cleanOutput").value;
-      if (!val) return showToast("⚠️ Filter numbers first.");
-      cleanedNumbers = val;
+  const dupDiv = document.getElementById("duplicateOutput");
+  dupDiv.innerHTML = "";
+  Array.from(dupes).forEach((n, i) => {
+    const el = document.createElement("div");
+    el.className = "dup-pill";
+    el.textContent = `${i + 1}. ${n}`;
+    dupDiv.appendChild(el);
+  });
 
-      const input = document.getElementById("numberInput").value.trim();
-      const lines = input.split("\n");
+  document.getElementById("dupCount").textContent = dupes.size;
+  document.getElementById("invalidOutput").textContent = invalid.join(", ");
+  document.getElementById("invalidCount").textContent = invalid.length;
+}
 
-      if (lines.length && lines[0].includes(":")) {
-        detectedName = lines[0].split(":")[0].trim();
-      }
+function copyToClipboard() {
+  const val = document.getElementById("cleanOutput").value;
+  if (!val) return showToast("⚠️ No numbers found.");
+  navigator.clipboard.writeText(val).then(() => showToast("✅ Copied!"));
+}
 
-      document.getElementById("modalNameInput").value = detectedName;
-      document.getElementById("modalDay").value = "";
-      document.getElementById("modalMonth").value = "";
-      document.getElementById("saveModal").style.display = "flex";
-    }
+function saveNumbers() {
+  const val = document.getElementById("cleanOutput").value;
+  if (!val) return showToast("⚠️ Filter numbers first.");
+  cleanedNumbers = val;
 
-    function closeModal() {
-      document.getElementById("saveModal").style.display = "none";
-    }
+  const input = document.getElementById("numberInput").value.trim();
+  const lines = input.split("\n");
+  if (lines.length && lines[0].includes(":")) {
+    detectedName = lines[0].split(":")[0].trim();
+  }
 
-    function confirmSave() {
-      const name = document.getElementById("modalNameInput").value.trim();
-      const day = document.getElementById("modalDay").value;
-      const month = document.getElementById("modalMonth").value;
+  document.getElementById("modalNameInput").value = detectedName;
+  document.getElementById("modalDay").value = "";
+  document.getElementById("modalMonth").value = "";
+  document.getElementById("saveModal").style.display = "flex";
+}
 
-      if (!name || !day || !month) {
-        showToast("⚠️ Fill all fields.");
-        return;
-      }
+function closeModal() {
+  document.getElementById("saveModal").style.display = "none";
+}
 
-      const date = `${day} ${month}`;
-      const now = new Date();
-      const time = now.toLocaleTimeString();
-      const entry = { name, date, time, numbers: cleanedNumbers };
+function confirmSave() {
+  const name = document.getElementById("modalNameInput").value.trim();
+  const day = document.getElementById("modalDay").value;
+  const month = document.getElementById("modalMonth").value;
+  if (!name || !day || !month) return showToast("⚠️ Fill all fields.");
 
-      let all = JSON.parse(localStorage.getItem("savedNumbers") || "[]");
-      all.push(entry);
-      localStorage.setItem("savedNumbers", JSON.stringify(all));
+  const date = `${day} ${month}`;
+  const time = new Date().toLocaleTimeString();
+  const entry = { name, date, time, numbers: cleanedNumbers };
 
-      closeModal();
-      showToast("✅ Saved!");
+  let all = JSON.parse(localStorage.getItem("savedNumbers") || "[]");
+  all.push(entry);
+  localStorage.setItem("savedNumbers", JSON.stringify(all));
 
-      setTimeout(() => {
-    location.reload();  // Reload the page after saving
-  }, 500);  
-      
-      renderHistory();
-    }
+  closeModal();
+  showToast("✅ Saved!");
+  renderHistory();
+}
 
-    function deleteEntry(index) {
-      let all = JSON.parse(localStorage.getItem("savedNumbers") || "[]");
-      all.splice(index, 1);
-      localStorage.setItem("savedNumbers", JSON.stringify(all));
-      renderHistory();
-      showToast("🗑️ Deleted!");
-    }
+function renderHistory() {
+  const saved = JSON.parse(localStorage.getItem("savedNumbers") || "[]");
+  const container = document.getElementById("savedData");
+  container.innerHTML = "";
 
-    function renderHistory() {
-      const saved = JSON.parse(localStorage.getItem("savedNumbers") || "[]");
-      const container = document.getElementById("savedData");
-      container.innerHTML = "";
-
-      const reversedSaved = saved.reverse();
-  reversedSaved.forEach((item, i) => {
+  saved.reverse().forEach((item, i) => {
     const numCount = item.numbers.split(",").length;
-    const dateParts = item.date.split(" ");
-    const day = dateParts[0];
-    const month = dateParts[1];
     const div = document.createElement("div");
     div.className = "saved-entry";
-        div.innerHTML = `
-          <div class="saved-meta">
-<b>🔥 <b>${numCount} Number<br>
-<b>📛 <b>${item.name}<br>
-<b>🗓️ ${item.date}</div>
-          <button class="copy-btn" onclick="navigator.clipboard.writeText('${item.numbers}').then(() => showToast('📋 Copied!'))">📋 Copy</button>
-        `;
-        container.appendChild(div);
-      });
-    }
-  </script>
+    div.innerHTML = `
+      <div class="saved-meta">
+        <b>🔥 ${numCount} Numbers</b><br>
+        <b>📛 ${item.name}</b><br>
+        <b>🗓️ ${item.date}
+      </div>
+      <button class="copy-btn" onclick="navigator.clipboard.writeText('${item.numbers}').then(() => showToast('📋 Copied!'))">📋 Copy</button>
+    `;
+    container.appendChild(div);
+  });
+}
+</script>
+
 </body>
 </html>
